@@ -174,7 +174,7 @@
     position: relative;
 }
 .battery::before{
-    background: url(../battery.svg) no-repeat;
+    background: url(../svg/battery.svg) no-repeat;
     transform: rotate(180deg);
     background-size: 16px;
     filter: invert(100%);
@@ -235,7 +235,7 @@
     font-size: 12px;
 }
 .camera-icon{
-    background: url(../camera-solid.svg) no-repeat;
+    background: url(../svg/camera-solid.svg) no-repeat;
     filter: invert(1) opacity(0.5);
     position: absolute;
     right: 0px;
