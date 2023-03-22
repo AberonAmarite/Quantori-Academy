@@ -1,7 +1,7 @@
 body{
     margin: 0;
 }
-@keyframes example1 {
+@keyframes movement {
     3.125%   { transform: translate(900px, 900px);}
     5.55555555%   { transform: translate(1600px, 200px);}
     6.25%   { transform: translate(1400px, 0px);}
@@ -55,15 +55,68 @@ body{
     96.875%   { transform: translate(900px, 900px);}
     100% {{ transform: translate(0px, 0px);}}
   }
+  @keyframes colorChange {
+    3.125%   { filter: brightness(0.9) invert(.7) sepia(1) hue-rotate(81deg) saturate(200%); }
+    5.55555555%  {filter: brightness(0.9) invert(.7) sepia(1) hue-rotate(181deg) saturate(200%) ;}
+    /*
+    6.25%   { };
+    9.375%  { };
+    11.1111111%   { };
+    12.5%   { };
+    15.75%   { transform: translate(1300px, 900px);}
+    16.6666666%   { transform: translate(1600px, 600px);}
+    18.75% { transform: translate(1000px, 0px);}
+    21.875%   { transform: translate(100px, 900px);}
+    22.2222222% { transform: translate(0px, 800px);}
+    25% { transform: translate(800px, 0px);}
+ 
+    27.7777777% { transform: translate(1600px, 800px);}
+    28.125% { transform: translate(1500px, 900px);}
+    31.25%   { transform: translate(600px, 0px);}
+    33.3333333% { transform: translate(0px, 600px);}
+    34.375%   { transform: translate(300px, 900px);}
+    37.5%   { transform: translate(1200px, 0px);}
+    38.8888888%   { transform: translate(1600px, 400px);}
+    40.625%   { transform: translate(1100px, 900px);}
+    43.75%   { transform: translate(200px, 0px);}
+    44.4444444%  { transform: translate(0, 200px);}
+    46.875%   { transform: translate(700px, 900px);}
+
+    50%  { transform: translate(1600px, 0px);}
+
+    53.125%   { transform: translate(700px, 900px);}
+    55.5555555%  { transform: translate(0, 200px);}
+    56.25%   { transform: translate(200px, 0px);}
+    59.375%   { transform: translate(1100px, 900px);}
+    61.1111111%   { transform: translate(1600px, 400px);}
+    62.5%   { transform: translate(1200px, 0px);}
+    65.625%   { transform: translate(300px, 900px);}
+    66.6666666% { transform: translate(0px, 600px);}
+    68.75%   { transform: translate(600px, 0px);}
+    71.875% { transform: translate(1500px, 900px);}
+    72.2222222% { transform: translate(1600px, 800px);}
+ 
+    75% { transform: translate(800px, 0px);}
+    77.7777777% { transform: translate(0px, 800px);}
+    78.125%{ transform: translate(100px, 900px);}
+    81.25%   { transform: translate(1000px, 0px);}
+    83.3333333%   { transform: translate(1600px, 600px);}
+    84.375%   { transform: translate(1300px, 900px);}
+    87.5%   { transform: translate(400px, 0px);}
+    88.8888888%   { transform: translate(0px, 400px);}
+    90.625%   { transform: translate(500px, 900px);}
+    93.75%   { transform: translate(1400px, 0px);}
+    94.4444444%   { transform: translate(1600px, 200px);}
+    96.875%   { transform: translate(900px, 900px);}
+    100% {{ transform: translate(0px, 0px);}}
+    */
+  }
 .dvd{
     width:  305px;
     height: 137px;
     background-image: url(../img/dvd.png);
     background-size: 100% 100%;
-    animation: example1;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    animation-duration: 20s;
+    animation: movement 60s linear infinite, colorChange 60s steps(1,end) infinite;
 }
 .screen{
     width: 1905px;
