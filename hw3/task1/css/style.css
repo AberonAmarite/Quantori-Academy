@@ -1,0 +1,86 @@
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+      url("../fonts/Inter.ttf");
+  }
+body{
+    margin: 0;
+}
+p{
+    margin: 0;
+}
+.container{
+    display: flex;
+    font-family: 'Inter', serif;
+    background: #F2F4F7;
+}
+.sidebar{
+    box-sizing: border-box;
+   position: relative;
+    width: 232px;
+    height: 65vh;
+
+    background: #FFFFFF;
+    border-right: 1px solid #EAECF0;
+}
+header{
+    box-sizing: border-box;
+    
+    width: 1208px;
+    height: 66px;
+
+    background: #FFFFFF;
+    border-bottom: 1px solid #EAECF0;
+
+}
+main{
+    
+}
+.sidebar__menu ul{
+    list-style-type: none;
+}
+.sidebar__menu li{
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+
+    color: #5F6980;
+}
+.sidebar__menu h2{
+    text-transform: uppercase;
+    
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 20px;
+    color: #9D9FA2;
+}
+.sidebar__buttons{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+}
+.banner{
+    width: 79vw;
+    padding: 32px 36px;
+    color: #FFFFFF;
+
+    background: #282828;
+    border-radius: 16px;
+}
+/* 1440 X 1562*/
+.banner__title{
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 34px;
+    letter-spacing: -0.6px;
+    margin-bottom: 8px;
+}
+.banner__text{
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+
+}
