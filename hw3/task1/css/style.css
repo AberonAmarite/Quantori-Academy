@@ -9,17 +9,20 @@ body{
 p{
     margin: 0;
 }
+a{
+    text-decoration: none;
+    color: inherit;
+}
 .container{
     display: flex;
     font-family: 'Inter', serif;
     background: #F2F4F7;
 }
 .sidebar{
+    height: 1024px;
     box-sizing: border-box;
    position: relative;
-    width: 232px;
-    height: 65vh;
-
+    min-width: 232px;
     background: #FFFFFF;
     border-right: 1px solid #EAECF0;
 }
@@ -33,22 +36,52 @@ header{
     border-bottom: 1px solid #EAECF0;
 
 }
-main{
-    
+.sidebar__menu{
+    margin: 20px;
 }
 .sidebar__menu ul{
     list-style-type: none;
+    padding: 0;
 }
-.sidebar__menu li{
+.sidebar__menu li .sidebar__li{
+    display: flex;
+    align-items: center;
+    position: relative;
     font-weight: 600;
     font-size: 14px;
     line-height: 22px;
-
+   
     color: #5F6980;
+}
+.sidebar__li a, .sidebar__li--open a{
+    margin-left: 28px;
+}
+.sidebar__li--open{
+    margin: 12px 0;
+}
+.sidebar__li--open{
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: #5F6980;
+}
+.sidebar__li{
+    padding: 12px 0;
+}
+.sidebar__li img:last-child{
+    position: absolute;
+    right: 0;
+}
+.sidebar__li img:first-child{
+    
+    position: absolute;
+}
+a.sidebar__item--chosen{
+    color: #282828;
 }
 .sidebar__menu h2{
     text-transform: uppercase;
-    
+   
     font-style: normal;
     font-weight: 600;
     font-size: 0.75rem;
@@ -62,11 +95,14 @@ main{
     display: flex;
     justify-content: space-around;
 }
+.sidebar__logo{
+    margin: 20px;
+}
 .banner{
-    width: 79vw;
+    width: 100%;
     padding: 32px 36px;
     color: #FFFFFF;
-
+    
     background: #282828;
     border-radius: 16px;
 }
