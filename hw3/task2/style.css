@@ -1,0 +1,24 @@
+body {
+    background: white;
+    text-align: center;
+    font-family: 'Comfortaa', cursive;
+}
+svg {
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+}
+
+.rotation{
+    transform-origin: 50% 50% ;
+    animation: rotation 10s linear infinite; 
+}
+.hour{
+    animation-duration: 40s;
+}
+  @keyframes rotation {
+    from {
+      transform: rotate(0deg); }
+    to {
+      transform: rotate(360deg); } }
+  
