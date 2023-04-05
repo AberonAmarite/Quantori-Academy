@@ -51,10 +51,11 @@ const getBiggestValue = numbers => {
   if (numbers.length > 0) {
     let max = numbers[0];
     numbers.forEach(el => {
-      if (el < max) max = el;
+      if (el > max) max = el;
     });
     return max;
-};
+  }
+}
 /**
   * Exercise 4
   *
@@ -250,9 +251,8 @@ const getSmallestValue2 = numbers => {
   * Use: filter, map, join
   */
   const getСharacterNames = (characters, franchise) => {
-    return characters.filter(obj => obj.franchise === franchise).map(obj => obj.name).join(' ');
+    return characters.filter(obj => obj.franchise === franchise).map(obj => obj.name).join(', ');
 };
-
 // ----==== Advanced exercises (8 items) ====----
 /**
   * Exercise 16
@@ -290,6 +290,7 @@ const getSmallestValue2 = numbers => {
       });
       res.push(min);
     }
+    return res;
 };
 /**
   * Exercise 18
@@ -341,18 +342,12 @@ const getSmallestValue2 = numbers => {
     let str1 = "", str2 = "";
     let i = 0;
     for (const c of string) {
-      let capital = c, small = c;
-      if (c >= 'a' && c <= 'z') {
-        capital = c - 'a' + 'A';
-      } else if (c >= 'A' && c <= 'Z') {
-        small = c - 'A' + 'a';
-      }
       if (i % 2) {
-        str1 = str1 + small;
-        str2 = str2 + capital;
+        str1 = str1 + c.toLowerCase();
+        str2 = str2 + c.toUpperCase();
       } else {
-        str2 = str2 + small;
-        str1 = str1 + capital;
+        str2 = str2 +  c.toLowerCase();
+        str1 = str1 + c.toUpperCase();
       }
       i++;
     }
@@ -379,6 +374,7 @@ const getSmallestValue2 = numbers => {
   const getCorrectString = string => {
     return string.replace(/[^\w\s]|(.)(?=\1\1)/gi, "") ;
 };
+
 /**
  * Exercise 22
  *
@@ -392,11 +388,12 @@ const getSmallestValue2 = numbers => {
       if (typeof (num) === 'number') {
         res.push(num);
       } else {
-        res.concat(getFlattenedArray(num));
+        res = res.concat(getFlattenedArray(num));
       }
     });
     return res;
 };
+
   /**
   * Exercise 23
   *
@@ -412,7 +409,6 @@ const getSmallestValue2 = numbers => {
         res.push(numbers[i]);
       }
     }
-  }
   return res;
 };
 
