@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clonify</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <a href="" class="sidebar__logo" src="svg/ui/logo.svg" alt="Logo"></a>
+            <nav class="sidebar__menu">
+                <div class="sidebar__dashboard">
+                    <h2>Dashboard</h2>
+                    <ul>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/dashboard.svg" alt="">
+                                <a class="sidebar__item--chosen" href="">Dashboard</a>
+                                <img src="svg/ui/arrow_up.svg" alt="">
+                            </div>
+                            <ul>
+                                <li>
+                                    <div class="sidebar__li--open"> <a class="sidebar__item--chosen"
+                                            href="">Analytics</a></div>
+                                </li>
+                                <li>
+                                    <div class="sidebar__li--open"> <a href="">Finance</a></div>
+                                </li>
+                                <li>
+                                    <div class="sidebar__li--open"> <a href="">Job Board</a></div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/messages.svg" alt="">
+                                <a href="">Messages</a>
+                                <img src="svg/ui/arrow_down.svg" alt="">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/friends.svg" alt="">
+                                <a href="">Friends</a>
+                                <img src="svg/ui/arrow_down.svg" alt="">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/apps.svg" alt="">
+                                <a href="">Apps</a>
+                                <img src="svg/ui/arrow_down.svg" alt="">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="sidebar__pages">
+                    <h2>Pages</h2>
+                    <ul>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/help_center.svg" alt="">
+                                <a href="">Help Center</a>
+                                <img src="svg/ui/arrow_down.svg" alt="">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="sidebar__li"><img src="svg/ui/file_manager.svg" alt="">
+                                <a href="">File Manager</a>
+                                <img src="svg/ui/arrow_down.svg" alt="">
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </nav>
+            <div class="sidebar__buttons">
+
+                <a href=""><img src="svg/ui/settings.svg" alt="settings"> </a>
+                <a href=""> <img src="svg/ui/logout.svg" alt="logout"> </a>
+                <a href=""><img src="svg/ui/language.svg" alt="language"> </a>
+            </div>
+        </aside>
+        <div class="container--right">
+            <header class="header">
+                <input class="header__search" type="search" id="search" name="search" placeholder="Search...">
+                <a href="" class="header__notifications button-link">
+                    <svg width="19" height="19">
+                        <circle cx="19" cy="0" r="3.43" fill="#E25563" />
+                    </svg>
+
+                </a>
+                <a href="" class="header__calendar button-link"></a>
+                <a href="" class="header__apps button-link"></a>
+                <a href="" class="header__pfp button-link">
+                    <svg width="40" height="40">
+                        <circle cx="36" cy="36" r="4" fill="#20C997" stroke="#FFFFFF" stroke-width="1.333" />
+                    </svg>
+                </a>
+            </header>
+            <main>
+                <section class="banner">
+                    <div class="banner__text">
+                        <strong class="banner__title">Unlock premium stats</strong>
+                        <p class="banner__paragraph">Get up to 10TB of storage for a limited time</p>
+                    </div>
+                    <button type="button" class="banner__button">
+                        <img src="svg/ui/upgrade_lighning.svg" alt="upgrade">
+                        Upgrade
+                    </button>
+                </section>
+                <section class="cards">
+                    <div class="cards__row1">
+                        <div class="cards__block">
+                            <h3 class="cards__title">Revenue</h3>
+                            <span class="cards__main-metric">$56,945</span>
+                            <div class="cards__metrics">
+                                <span class="cards__new-metric cards__new-metric--positive">+45%</span>
+                                <span class="cards__old-metric">From 4.6%</span>
+                            </div>
+                        </div>
+                        <div class="cards__block">
+                            <h3 class="cards__title">Users</h3>
+                            <span class="cards__main-metric">76.8%</span>
+                            <div class="cards__metrics">
+                                <span class="cards__new-metric cards__new-metric--negative">-1.7%</span>
+                                <span class="cards__old-metric">From 4.6%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cards__row2">
+                        <div class="cards__block">
+                            <h3 class="cards__title">New Signups</h3>
+                            <span class="cards__main-metric">116</span>
+                            <div class="cards__metrics">
+                                <span class="cards__new-metric">0.0</span>
+                            </div>
+                        </div>
+                        <div class="cards__block">
+                            <h3 class="cards__title">Retention</h3>
+                            <span class="cards__main-metric">12.67%</span>
+                            <div class="cards__metrics">
+                                <span class="cards__new-metric cards__new-metric--positive">+0.6</span>
+                                <span class="cards__old-metric">From 4.6%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="performance">
+                    <div class="section-header">
+                        <h1 class="section-title">Performance
+                        </h1>
+                        <a href="">
+                            <div class="section-settings">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="performance__main">
+                        <div class="performance__y-axis">
+                            <ul>
+                                <li>400</li>
+                                <li>300</li>
+                                <li>200</li>
+                                <li>100</li>
+                                <li>0</li>
+                            </ul>
+                        </div>
+                        <div class="performance__right">
+                            <div class="performance__graph">
+
+
+
+                            </div>
+                            <div class="performance__x-axis">
+                                <ul>
+                                    <li>Sun</li>
+                                    <li>Mon</li>
+                                    <li>Tue</li>
+                                    <li>Wed</li>
+                                    <li>Thu</li>
+                                    <li>Fri</li>
+                                    <li>Sat</li>
+                                </ul>
+                            </div>
+                            <div class="performance__labels">
+                                <div class="performance__label-container">
+                                    <div class="performance__label-circle performance__label-circle--blue"></div>
+                                    <div class="performance__label-text">Instagram</div>
+                                </div>
+                                <div class="performance__label-container">
+                                    <div class="performance__label-circle performance__label-circle--green"></div>
+                                    <div class="performance__label-text">Facebook</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="apps">
+                    <div class="section-header">
+                        <h1 class="section-title">Installed apps
+                        </h1>
+                        <a href="">
+                            <div class="section-settings">
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="apps__table">
+
+                        <div class="apps__column-title"><span>Source</span></div>
+                        <div class="apps__column-title">Amount</div>
+                        <div class="apps__column-title">Status</div>
+                        <div class="apps__column-title">User ID</div>
+                        <div class="apps__column-title">Joined</div>
+                        <div class="apps__column-title">Group</div>
+                        <!--Zepplin begins-->
+                        <div class="apps__source">
+                            <div class="apps__logo-box">
+                                <img src="svg/logos/zepplin.svg" alt="">
+                            </div>
+                            Zepplin
+                        </div>
+                        <div class="apps__amount">686.00</div>
+                        <div class="apps__status">
+                            <div class="apps__status-container apps__status-container--active">Active</div>
+                        </div>
+                        <div class="apps__uid">114423</div>
+                        <div class="apps__joined">October</div>
+                        <div class="apps__group">Design</div>
+                        <!--Figma begins-->
+                        <div class="apps__source">
+                            <div class="apps__logo-box">
+                                <img src="svg/logos/figma.svg" alt="">
+                            </div>
+                            Figma
+                        </div>
+                        <div class="apps__amount">864.00</div>
+                        <div class="apps__status">
+                            <div class="apps__status-container apps__status-container--pending">Pending</div>
+                        </div>
+                        <div class="apps__uid">76223</div>
+                        <div class="apps__joined">June</div>
+                        <div class="apps__group">Finance</div>
+                        <div class="apps__source">
+                            <div class="apps__logo-box">
+                                <img src="svg/logos/meta.svg" alt="">
+                            </div>
+                            Meta
+                        </div>
+                        <div class="apps__amount">176.00</div>
+                        <div class="apps__status">
+                            <div class="apps__status-container apps__status-container--cancelled">Cancelled</div>
+                        </div>
+                        <div class="apps__uid">89453</div>
+                        <div class="apps__joined">March</div>
+                        <div class="apps__group">Coding</div>
+                        <!--Angular begins-->
+                        <div class="apps__source">
+                            <div class="apps__logo-box">
+                                <img src="svg/logos/angular.svg" alt="">
+                            </div>
+                            Angular
+                        </div>
+                        <div class="apps__amount">49.00</div>
+                        <div class="apps__status">
+                            <div class="apps__status-container apps__status-container--active">Active</div>
+                        </div>
+                        <div class="apps__uid">11467</div>
+                        <div class="apps__joined">February</div>
+                        <div class="apps__group">Marketing</div>
+                        <!--Vue begins-->
+                        <div class="apps__source">
+                            <div class="apps__logo-box">
+                                <img src="svg/logos/vue.svg" alt="">
+                            </div>
+                            Vue
+                        </div>
+                        <div class="apps__amount">999.00</div>
+                        <div class="apps__status">
+                            <div class="apps__status-container apps__status-container--active">Active</div>
+                        </div>
+                        <div class="apps__uid">67385</div>
+                        <div class="apps__joined">October</div>
+                        <div class="apps__group">Finance</div>
+                    </div>
+                    <div class="apps__pagination">
+                        <div class="apps__pagination-container">
+                            <a href="">
+                                <div class="apps__pagination-arrow-left"></div>
+                            </a>
+                            <div class="apps__page-numbers">1/15</div>
+                            <a href="">
+                                <div class="apps__pagination-arrow-right"></div>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+    </div>
+</body>
+
+</html>
