@@ -1,5 +1,240 @@
-body, html {
+@font-face {
+    font-family: Nunito;
+    src: url(fonts/Nunito.ttf);
+}
+input::-webkit-input-placeholder {
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  input:-ms-input-placeholder {
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  input:-moz-placeholder {
+    font-family: 'Nunito', sans-serif;
+  }
+  
+  input::-moz-placeholder {
+    font-family: 'Nunito', sans-serif;
+  }
+body,
+html {
     margin: 0;
     padding: 0;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Nunito', sans-serif;
+}
+button{
+    border: none;
+    font-family: 'Nunito', sans-serif;
+}
+#root {
+    padding: 0 12.5%;
+}
+
+h1 {
+    margin: 44px 0;
+}
+
+/* Style for the modal */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    width: 41vw;
+    height: 45vh;
+}
+
+/* Style for the modal content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+
+    border-radius: 10px;
+}
+
+/* Style for the close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Style for the form */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style for the tags container */
+.modal__tags {
+    display: flex;
+    align-items: center
+}
+
+/* Style for the tag button */
+.modal__tag {
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-weight: 500;
+    font-size: 12px;
+    margin-right: 12px;
+    height: 19px;
+    border: 1px solid white;
+
+}
+
+.modal__tag-health{
+    color: #0053CF;
+    background: rgba(60, 134, 244, 0.31);
+}
+.modal__tag-work{
+    color: #9747FF;
+    background: #E8D7FF;
+}
+.modal__tag-home{
+    background: #E2F7E2;
+    color: #639462;
+}
+.modal__tag-other{
+    background: #FFECC7;
+    color: #EA8C00;
+}
+.header__main{
+    display: flex;
+    align-items: center;
+}
+.header__title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 36px;
+}
+.search-input{
+    padding: 16px 21px;
+
+    width: 100%;
+    height: 52px;
+
+    background: #F5F5F5;
+    border: 1px solid #D2D2D2;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #000;
+    margin-right: 40px;
+}
+.search-input::placeholder{
+    color: #838383;
+}
+.modal__task-title{
+    box-sizing: border-box;
+    margin-bottom: 18px;
+}
+.header__new-task{
+    padding: 16px 32px;
+    white-space: nowrap;
+    height: 52px;
+    border: none;
+    background: rgba(60, 134, 244, 0.15);
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 20px;
+    cursor: pointer;
+    color: #0053CF;
+
+}
+.row{
+    display: flex;
+}
+.modal__row1{
+    justify-content: space-between;
+    margin-bottom: 92px;
+}
+.modal__row2 {
+    justify-content: space-between;
+}
+.modal__row2 button{
+    width: 49%;
+
+}
+.modal__add-task{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 16px 32px;
+    gap: 10px;
+
+    height: 52px;
+
+    background: #D3D3D3;
+    border-radius: 12px;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 20px;
+    /* identical to box height, or 125% */
+
+    display: flex;
+    align-items: center;
+
+    color: #FFFFFF;
+}
+.modal__add-task--complete{
+    background: #3C86F4;
+    cursor:pointer;
+}
+.modal__cancel{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 32px;
+    gap: 10px;
+    cursor: pointer;
+    height: 52px;
+
+    border-radius: 12px;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 16px;
+    line-height: 20px;
+
+    color: #0053CF;
+
+}
+.modal__deadline{
+    box-sizing: border-box;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 10px;
+
+    height: 40px;
+
+    background: #FFFFFF;
+    border: 2px solid rgba(60, 134, 244, 0.6);
+    border-radius: 12px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    cursor: pointer;
+    color: #1D1D1D;
 }

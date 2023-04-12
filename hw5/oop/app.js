@@ -25,4 +25,4 @@ class App extends Component {
     }
 }
 
-document.body.appendChild(new App().render());
+// document.body.appendChild(new App().render());
