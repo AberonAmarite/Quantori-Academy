@@ -82,10 +82,11 @@
     }
     function CurrentTask(task, trashBtnCallback, transferCurrentTask) {
         const container = Container({ classNames: ["row", "current"] });
-        const checkbox = Checkbox(() => {
-            transferCurrentTask(task);
-        }
-        );
+        const checkbox = Button({
+            text: "", onClick: () => {
+                transferCurrentTask(task);
+            }
+        } );
         checkbox.className = "current__checkbox"
         const mainText = Container({ classNames: ["column", "current__main-text"] });
         const titleElem = Heading({ text: task.title, type: 3 });
@@ -97,7 +98,7 @@
         tagContainer.append(tagElem);
         const deadlineElem = Container({ classNames: ["current__deadline"] });
         const trashBtn = Button({
-            text: "Del", onClick: () => {
+            text: "", onClick: () => {
                 trashBtnCallback(task);
             }
         });
@@ -127,10 +128,9 @@
         container.append(checkbox, mainText, trashBtn);
         return container;
     }   
-    function CompletedTask(task, transferCompletedTask) {
+    function CompletedTask(task) {
         const container = Container({ classNames: ["row", "completed"] });
-        const checkbox = Checkbox(() => transferCompletedTask(task));
-        checkbox.className = "completed__checkbox"
+        const checkbox = Container({classNames: ["completed__checkbox"]});
         const mainText = Container({ classNames: ["column", "completed__main-text"] });
         const titleElem = Heading({ text: task.title, type: 3 });
         titleElem.className = "completed__title";
@@ -242,17 +242,13 @@
 
         function constructModal() {
             // Create the modal
-            let modal = document.createElement("div");
-            modal.id = "modal";
-            modal.className = "modal";
+            let modal = Container({ classNames: ["modal"] });
 
             // Create the modal content
-            let modalContent = document.createElement("div");
-            modalContent.className = "modal-content";
+            let modalContent = Container({ classNames: ["modal-content"] });
 
             // Create the title
-            let title = document.createElement("h2");
-            title.innerHTML = "Add Task";
+            let title = Heading({text: "Add Task", type: 2})
             modalContent.appendChild(title);
 
             // Create the form
@@ -266,8 +262,7 @@
             form.appendChild(taskNameInput);
 
             // Create the tags buttons
-            let tagsContainer = document.createElement("div");
-            tagsContainer.className = "modal__tags";
+            let tagsContainer = Container({ classNames: ["modal__tags"] });
             let selectedTagName = "tag";
 
             for (let i = 0; i < tagNames.length; i++) {
@@ -384,14 +379,6 @@
             addCompletedTask(currentTask.title, currentTask.deadline, currentTask.tag);
             removeCurrentTask(currentTask);
         }
-        const transferCompletedTask = (completedTask) => {
-                    
-            addCurrentTask(completedTask.title, completedTask.deadline, completedTask.tag);
-            const newTasks = completedTasks.filter(el => el !== completedTask);
-            
-            localStorage.setItem("completedTasks", JSON.stringify(newTasks));
-            setCompletedTasks(newTasks, stateCompleted);
-        }
 
         if (currentTasks && currentTasks.length > 0) {
             const currentTasksList = Container({ classNames: [] });
@@ -420,8 +407,7 @@
             const completedTasksList = Container({ classNames: [] });
             for (completedTask of completedTasks) {
                 
-                
-                completedTasksList.append(CompletedTask(completedTask, transferCompletedTask));
+                completedTasksList.append(CompletedTask(completedTask));
             }
             main.appendChild(completedTasksList);
         } else {
