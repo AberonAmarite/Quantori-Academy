@@ -81,7 +81,7 @@
         return header;
     }
     function addTask(title, deadline, tag) {
-        currentTasks.push({
+        completedTasks.push({
             title: title,
             deadline: deadline,
             tag: tag
@@ -106,7 +106,7 @@
         return tasks;
     }
     function constructTasksCurrent() {
-        return constructTasks("All Tasks", currentTasks);
+        return constructTasks("All Tasks", completedTasks);
     }
     function constructTasksCompleted() {
 
@@ -175,7 +175,7 @@
 
         // Create the Add Task and Cancel buttons
         var addTaskButton = Button( "Add Task", () => {
-            addCurrentTask(taskName.value, deadlineDate.value, selectedTag);
+            addcompletedTask(taskName.value, deadlineDate.value, selectedTag);
             console.log("Task Name:", taskName.value);
             console.log("Deadline Date:", deadlineDate.value);
             console.log("Tag:", selectedTag);
@@ -224,9 +224,9 @@
         const button = Button({text: "Add item", onClick: addItem});
         div.append(list, button);
         */
-        const [currentTasks, setCurrentTasks] = useState([]);
-        function addCurrentTask(title, deadline, tag) {
-            setCurrentTasks([...currentTasks, {
+        const [completedTasks, setcompletedTasks] = useState([]);
+        function addcompletedTask(title, deadline, tag) {
+            setcompletedTasks([...completedTasks, {
                 title: title,
                 deadline: deadline,
                 tag: tag
@@ -253,3 +253,32 @@
     // initial render
     renderApp();
 })();
+
+        
+
+        
+
+        if (completedTasks && completedTasks.length > 0) {
+            const completedTasksList = Container({ classNames: [] });
+            for (completedTask of completedTasks) {
+                const transferCompletedTask = () => {
+                    console.log('task: ', completedTask);
+                    
+                    const newTasks = completedTasks.filter(el => el !== completedTask);
+                    setcompletedTasks(newTasks);
+                    localStorage.setItem("completedTasks", JSON.stringify(newTasks));
+            }
+                completedTasksList.append(completedTask(completedTask, removecompletedTask));
+            }
+            main.appendChild(completedTasksList);
+        } else {
+            const nocompletedTasksParagraph = Paragraph({ text: "No current tasks" });
+            main.appendChild(nocompletedTasksParagraph);
+        }
+       
+        function addCompletedTask(title, deadline, tag) {
+            const task = { title: title, deadline: deadline, tag: tag };
+            setcompletedTasks([...completedTasks, task]);
+            localStorage.setItem("completedTasks", JSON.stringify([...completedTasks, task]));
+            hideModal(addTaskModal);
+        }

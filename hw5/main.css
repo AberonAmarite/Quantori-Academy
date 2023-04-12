@@ -30,11 +30,15 @@ button{
 #root {
     padding: 0 12.5%;
 }
-
+ul{
+    list-style-type: none;
+}
 h1 {
     margin: 44px 0;
 }
-
+.display-none{
+    display: none !important;
+}
 /* Style for the modal */
 .modal {
     position: fixed;
@@ -45,7 +49,9 @@ h1 {
     width: 41vw;
     height: 45vh;
 }
-
+.modal button{
+    cursor: pointer;
+}
 /* Style for the modal content */
 .modal-content {
     background-color: #fefefe;
@@ -85,7 +91,7 @@ form {
 }
 
 /* Style for the tag button */
-.modal__tag {
+.tag {
     border-radius: 6px;
     padding: 2px 8px;
     font-weight: 500;
@@ -93,22 +99,28 @@ form {
     margin-right: 12px;
     height: 19px;
     border: 1px solid white;
-
+    display: inline;
+    background: #FFECC7;
+    color: #EA8C00;
+}
+.completed .tag{
+    background: #F5F5F5;
+    color: #838383;
 }
 
-.modal__tag-health{
+.tag-health{
     color: #0053CF;
     background: rgba(60, 134, 244, 0.31);
 }
-.modal__tag-work{
+.tag-work{
     color: #9747FF;
     background: #E8D7FF;
 }
-.modal__tag-home{
+.tag-home{
     background: #E2F7E2;
     color: #639462;
 }
-.modal__tag-other{
+.tag-other{
     background: #FFECC7;
     color: #EA8C00;
 }
@@ -159,6 +171,10 @@ form {
 }
 .row{
     display: flex;
+}
+.column{
+    display: flex;
+    flex-direction: column;
 }
 .modal__row1{
     justify-content: space-between;
@@ -237,4 +253,40 @@ form {
     line-height: 20px;
     cursor: pointer;
     color: #1D1D1D;
+}
+.current, .completed{
+    align-items: center;
+    margin-bottom: 29px;
+}
+.current__main-text, .completed__main-text{
+    width: 100%;
+}
+.current__delete{
+    cursor: pointer;
+}
+.current__checkbox, .completed__checkbox{
+    width: 21px;
+    height: 21px;
+    background: #FFFFFF;
+    border: 2px solid #D3D3D3;
+    border-radius: 4px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+.current__deadline, .completed__deadline{
+    display: flex;
+    align-self: center;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+
+    color: #838383;
+}
+.current__title, .completed__title{
+    margin: 0 0 9px 0;
+    display: flex;
+    align-items: flex-start;
+}
+.completed__title{
+    color:#838383;
 }

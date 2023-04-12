@@ -1,15 +1,16 @@
 (function () {
-    let state = undefined;
+    let stateCurrent = undefined, stateCompleted = undefined;
     const tagNames = ["health", "work", "home", "other"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     /**
      * Global application state
      * @template T
      * @param {T} initialValue
      * @returns {[T, function(T): void]}
      */
-    function useState(initialValue) {
+    function useState(initialValue, state) {
         state = state || initialValue;
-
         function setValue(newValue) {
             state = newValue;
             renderApp();
@@ -73,6 +74,120 @@
         header.classList.add("header")
         return header;
     }
+    function Checkbox(onClick) {
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.onclick = onClick;
+        return checkbox;
+    }
+    function CurrentTask(task, trashBtnCallback, transferCurrentTask) {
+        const container = Container({ classNames: ["row", "current"] });
+        const checkbox = Checkbox(() => {
+            transferCurrentTask(task);
+        }
+        );
+        checkbox.className = "current__checkbox"
+        const mainText = Container({ classNames: ["column", "current__main-text"] });
+        const titleElem = Heading({ text: task.title, type: 3 });
+        titleElem.className = "current__title";
+        const bottomElems = Container({ classNames: ["row"] });
+        const tagContainer = Container({ classNames: [] });
+        const tagElem = Container({ classNames: ["tag", `tag-${task.tag}`] });
+        tagElem.innerHTML = task.tag;
+        tagContainer.append(tagElem);
+        const deadlineElem = Container({ classNames: ["current__deadline"] });
+        const trashBtn = Button({
+            text: "Del", onClick: () => {
+                trashBtnCallback(task);
+            }
+        });
+        trashBtn.className = "current__delete";
+        const today = new Date();
+        const dlAsDate = new Date(task.deadline);
+
+        let todayArr = extractDayAndName(today);
+        let dlArr = extractDayAndName(dlAsDate);
+        let todayArr1 = extractDateWithZeroes(today);
+        let dlArr1 = extractDateWithZeroes(dlAsDate);
+
+        if (todayArr1[1] == dlArr1[1] && todayArr1[2] == dlArr1[2]) {
+            if (todayArr[1] == dlArr[1]) {
+                deadlineElem.innerHTML = "Today";
+            } else if(todayArr[1]+1 == (dlArr[1])){
+                deadlineElem.innerHTML = "Tomorrow";
+            } else {
+                deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
+            }
+        } else {
+            deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
+        }
+
+        bottomElems.append(tagContainer, deadlineElem);
+        mainText.append(titleElem, bottomElems);
+        container.append(checkbox, mainText, trashBtn);
+        return container;
+    }   
+    function CompletedTask(task, transferCompletedTask) {
+        const container = Container({ classNames: ["row", "completed"] });
+        const checkbox = Checkbox(() => transferCompletedTask(task));
+        checkbox.className = "completed__checkbox"
+        const mainText = Container({ classNames: ["column", "completed__main-text"] });
+        const titleElem = Heading({ text: task.title, type: 3 });
+        titleElem.className = "completed__title";
+        const bottomElems = Container({ classNames: ["row"] });
+        const tagContainer = Container({ classNames: [] });
+        const tagElem = Container({ classNames: ["tag", `tag-${task.tag}`] });
+        tagElem.innerHTML = task.tag;
+        tagContainer.append(tagElem);
+        const deadlineElem = Container({ classNames: ["completed__deadline"] });
+
+        const today = new Date();
+        const dlAsDate = new Date(task.deadline);
+
+        let todayArr = extractDayAndName(today);
+        let dlArr = extractDayAndName(dlAsDate);
+        let todayArr1 = extractDateWithZeroes(today);
+        let dlArr1 = extractDateWithZeroes(dlAsDate);
+
+        if (todayArr1[1] == dlArr1[1] && todayArr1[2] == dlArr1[2]) {
+            if (todayArr[1] == dlArr[1]) {
+                deadlineElem.innerHTML = "Today";
+            } else if(todayArr[1]+1 == (dlArr[1])){
+                deadlineElem.innerHTML = "Tomorrow";
+            } else {
+                deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
+            }
+        } else {
+            deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
+        }
+
+        bottomElems.append(tagContainer, deadlineElem);
+        mainText.append(titleElem, bottomElems);
+        container.append(checkbox, mainText);
+        return container;
+    }  
+
+    
+   
+
+    function extractDayAndName(date) {
+        let month =  date.getMonth();
+        let dayName = date.getDay();
+        let day = date.getDate();
+        return [dayName, day, month];
+    }
+    function extractDateWithZeroes(date) {
+        let month =  date.getMonth() > 9 ? date.getMonth()+1 : "0" + (date.getMonth()+1);
+        let day = date.getDate() > 9 ? date.getDate() : "0" + date.getDate();
+        // [DD,MM,YYYY]
+        return [day, month, date.getFullYear()];
+    }
+    function numberToMonth(num) {
+        return months[num];
+    }
+    function numberToDay(num) {
+        return dayNames[num];
+    }
  
 
     /**
@@ -81,7 +196,6 @@
      */
     function App() {
         const div = document.createElement("div");
-
 
         const addTaskModal = constructModal();
         hideModal(addTaskModal);
@@ -97,6 +211,24 @@
             const headerMain = Container({classNames: ["header__main"]});
             const search = SearchInput("Search Task");
             search.classList.add("search-input");
+            function searchResults(tasks, searchValue, titleSelector) {
+                for (let i = 0; i < tasks.length; i++) {
+                    const taskTitle = tasks[i].querySelector(titleSelector).textContent.toLowerCase();
+                    if (taskTitle.includes(searchValue)) {
+                        tasks[i].classList.remove("display-none");
+                    } else {
+                        tasks[i].classList.add("display-none");
+                    }
+                }
+            }
+            search.oninput =() => {
+                const searchValue = search.value.toLowerCase();
+                const currentTasks = document.getElementsByClassName("current");
+                const completedTasks = document.getElementsByClassName("completed");
+                searchResults(currentTasks, searchValue, ".current__title");
+                searchResults(completedTasks, searchValue, ".completed__title");
+
+            }
             const newTaskBtn = Button({
                 text: "+ New Task", onClick: () => {
                     showModal(addTaskModal);
@@ -146,14 +278,14 @@
                         selectedTagName = tagNames[i];
                         const color = window.getComputedStyle(tagButton).getPropertyValue('color');
                         tagButton.style.border = `1px solid ${color}`;
-                        for(element of tagsContainer.getElementsByClassName("modal__tag")){
+                        for(element of tagsContainer.getElementsByClassName("tag")){
                             if (element.innerHTML != selectedTagName) {
                                 element.style.border = "1px solid white";
                             }
                         };
                     }
                 });
-                tagButton.classList.add("modal__tag", `modal__tag-${tagNames[i]}`);
+                tagButton.classList.add("tag", `tag-${tagNames[i]}`);
                 tagButton.id = tagNames[i];
                 tagsContainer.appendChild(tagButton);
             }
@@ -166,17 +298,12 @@
             deadlineDateInput.style.position = "absolute";
 
             const today = new Date(); 
-            function extractDate(date) {
-                let month =  date.getMonth() > 9 ? date.getMonth()+1 : "0" + (date.getMonth()+1);
-                let day = date.getDate() > 9 ? date.getDate() : "0" + date.getDate();
-                // [DD,MM,YYYY]
-                return [day, month, date.getFullYear()];
-            }
-            const todayArray = extractDate(today);
+           
+            const todayArray = extractDateWithZeroes(today);
             let currentDate = "" + `${todayArray[2]}-${todayArray[1]}-${todayArray[0]}`;
             deadlineDateInput.defaultValue = currentDate;
 
-            const dateArray = extractDate(new Date(deadlineDateInput.value));
+            const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
            
 
             let deadlineDateSubstituteStr =`${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
@@ -188,7 +315,7 @@
             const dateText = Paragraph({ text: deadlineDateSubstituteStr });
             deadlineDateSubstitute.append(dateText, deadlineDateInput);
             function changeDateSubsitute() {
-                const dateArray = extractDate(new Date(deadlineDateInput.value));
+                const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
                 dateText.innerText = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
                 
             }
@@ -199,10 +326,8 @@
             // Create the Add Task and Cancel buttons
             let addTaskButton = Button({
                 text: "Add Task", onClick: () => {
-                    addCurrentTask(taskNameInput.value, deadlineDateInput.value, selectedTag);
-                    console.log("Task Name:", taskNameInput.value);
-                    console.log("Deadline Date:", deadlineDateInput.value);
-                    console.log("Tag:", selectedTag);
+                    addCurrentTask(taskNameInput.value, deadlineDateInput.value, selectedTagName);
+                    
                 }
             });
             addTaskButton.type = "button";
@@ -235,8 +360,13 @@
 
             return modal;
         }
-        const currentTasksFromStorage = JSON.parse(localStorage.getItem("currentTasks"));
-        const [currentTasks, setCurrentTasks] = useState(currentTasksFromStorage);
+
+
+        const currentTasksFromStorage = JSON.parse(localStorage.getItem("currentTasks")) || [];
+        const [currentTasks, setCurrentTasks] = useState(currentTasksFromStorage, stateCurrent);
+        const completedTasksFromStorage = JSON.parse(localStorage.getItem("completedTasks")) || [];
+        
+        const [completedTasks, setCompletedTasks] = useState(completedTasksFromStorage, stateCompleted); // completedTasks=currentTasks. Why?
 
 
         const main = document.createElement("main");
@@ -244,8 +374,30 @@
         const currentTasksHeading = Heading({ text: "Current Tasks", type: 2 });
         main.appendChild(currentTasksHeading);
 
+        function removeCurrentTask (currentTask){
+            const newTasks = currentTasks.filter(el => el !== currentTask);
+            
+            localStorage.setItem("currentTasks", JSON.stringify(newTasks));
+            setCurrentTasks(newTasks, stateCurrent);
+        }
+        function transferCurrentTask  (currentTask)  {
+            addCompletedTask(currentTask.title, currentTask.deadline, currentTask.tag);
+            removeCurrentTask(currentTask);
+        }
+        const transferCompletedTask = (completedTask) => {
+                    
+            addCurrentTask(completedTask.title, completedTask.deadline, completedTask.tag);
+            const newTasks = completedTasks.filter(el => el !== completedTask);
+            
+            localStorage.setItem("completedTasks", JSON.stringify(newTasks));
+            setCompletedTasks(newTasks, stateCompleted);
+        }
+
         if (currentTasks && currentTasks.length > 0) {
-            const currentTasksList = List({ items: currentTasks.map((task) => task.title) });
+            const currentTasksList = Container({ classNames: [] });
+            for (currentTask of currentTasks) {
+                currentTasksList.append(CurrentTask(currentTask, removeCurrentTask, transferCurrentTask));
+            }
             main.appendChild(currentTasksList);
         } else {
             const noCurrentTasksParagraph = Paragraph({ text: "No current tasks" });
@@ -254,8 +406,33 @@
         div.append(main);
         function addCurrentTask(title, deadline, tag) {
             const task = { title: title, deadline: deadline, tag: tag };
-            setCurrentTasks([...currentTasks, task]);
+           
             localStorage.setItem("currentTasks", JSON.stringify([...currentTasks, task]));
+            setCurrentTasks([...currentTasks, task], stateCurrent);
+            hideModal(addTaskModal);
+        }
+
+
+        const completedTasksHeading = Heading({ text: "Completed Tasks", type: 2 });
+        main.appendChild(completedTasksHeading);
+
+        if (completedTasks && completedTasks.length > 0) {
+            const completedTasksList = Container({ classNames: [] });
+            for (completedTask of completedTasks) {
+                
+                
+                completedTasksList.append(CompletedTask(completedTask, transferCompletedTask));
+            }
+            main.appendChild(completedTasksList);
+        } else {
+            const noCompletedTasksParagraph = Paragraph({ text: "No completed tasks" });
+            main.appendChild(noCompletedTasksParagraph);
+        }
+       
+        function addCompletedTask(title, deadline, tag) {
+            const task = { title: title, deadline: deadline, tag: tag };
+            localStorage.setItem("completedTasks", JSON.stringify([...completedTasks, task]));
+            setCompletedTasks([...completedTasks, task], stateCompleted);
         }
 
         function showModal(modal) {
@@ -280,7 +457,7 @@
         appContainer.innerHTML = "";
         appContainer.append(App());
     }
-    
+
     // initial render
     renderApp();
 })();
