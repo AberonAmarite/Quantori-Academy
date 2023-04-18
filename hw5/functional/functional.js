@@ -80,67 +80,29 @@
         checkbox.onclick = onClick;
         return checkbox;
     }
-    function CurrentTask(task, trashBtnCallback, transferCurrentTask) {
-        const container = Container({ classNames: ["row", "current"] });
-        const checkbox = Button({
-            text: "", onClick: () => {
-                transferCurrentTask(task);
-            }
-        } );
-        checkbox.className = "current__checkbox"
-        const mainText = Container({ classNames: ["column", "current__main-text"] });
-        const titleElem = Heading({ text: task.title, type: 3 });
-        titleElem.className = "current__title";
-        const bottomElems = Container({ classNames: ["row"] });
-        const tagContainer = Container({ classNames: [] });
-        const tagElem = Container({ classNames: ["tag", `tag-${task.tag}`] });
-        tagElem.innerHTML = task.tag;
-        tagContainer.append(tagElem);
-        const deadlineElem = Container({ classNames: ["current__deadline"] });
-        const trashBtn = Button({
-            text: "", onClick: () => {
-                trashBtnCallback(task);
-            }
-        });
-        trashBtn.className = "current__delete";
-        const today = new Date();
-        const dlAsDate = new Date(task.deadline);
-
-        let todayArr = extractDayAndName(today);
-        let dlArr = extractDayAndName(dlAsDate);
-        let todayArr1 = extractDateWithZeroes(today);
-        let dlArr1 = extractDateWithZeroes(dlAsDate);
-
-        if (todayArr1[1] == dlArr1[1] && todayArr1[2] == dlArr1[2]) {
-            if (todayArr[1] == dlArr[1]) {
-                deadlineElem.innerHTML = "Today";
-            } else if(todayArr[1]+1 == (dlArr[1])){
-                deadlineElem.innerHTML = "Tomorrow";
-            } else {
-                deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
-            }
-        } else {
-            deadlineElem.innerHTML = `${numberToDay(dlArr[0])}, ${dlArr[1]} ${numberToMonth(dlArr[2])}`;
+    function Task(task, trashBtnCallback, transferCurrentTask) {
+        let taskType = "completed";
+        let checkboxCallback = () => { };
+        if (trashBtnCallback) {
+            taskType = "current";
+            checkboxCallback = () => transferCurrentTask(task);
         }
-
-        bottomElems.append(tagContainer, deadlineElem);
-        mainText.append(titleElem, bottomElems);
-        container.append(checkbox, mainText, trashBtn);
-        return container;
-    }   
-    function CompletedTask(task) {
-        const container = Container({ classNames: ["row", "completed"] });
-        const checkbox = Container({classNames: ["completed__checkbox"]});
-        const mainText = Container({ classNames: ["column", "completed__main-text"] });
+        const container = Container({ classNames: ["row", taskType] });
+       
+        const checkbox = Button({
+            text: "", onClick: checkboxCallback
+        } );
+        checkbox.className = `${taskType}__checkbox`;
+        const mainText = Container({ classNames: ["column", `${taskType}__main-text`] });
         const titleElem = Heading({ text: task.title, type: 3 });
-        titleElem.className = "completed__title";
+        titleElem.className = `${taskType}__title`;
         const bottomElems = Container({ classNames: ["row"] });
         const tagContainer = Container({ classNames: [] });
         const tagElem = Container({ classNames: ["tag", `tag-${task.tag}`] });
         tagElem.innerHTML = task.tag;
         tagContainer.append(tagElem);
-        const deadlineElem = Container({ classNames: ["completed__deadline"] });
-
+        const deadlineElem = Container({ classNames: [`${taskType}__deadline`] });
+       
         const today = new Date();
         const dlAsDate = new Date(task.deadline);
 
@@ -164,10 +126,24 @@
         bottomElems.append(tagContainer, deadlineElem);
         mainText.append(titleElem, bottomElems);
         container.append(checkbox, mainText);
+        if (taskType === "current") {
+            const trashBtn = Button({
+                text: "", onClick: () => {
+                    trashBtnCallback(task);
+                }
+            });
+            trashBtn.className = "current__delete";
+            container.append(trashBtn);
+        }
         return container;
-    }  
+    }
 
-    
+    function CurrentTask(task, trashBtnCallback, transferCurrentTask) {
+        return Task(task, trashBtnCallback, transferCurrentTask);
+    }   
+    function CompletedTask(task) {
+        return Task(task);
+    }  
    
 
     function extractDayAndName(date) {
