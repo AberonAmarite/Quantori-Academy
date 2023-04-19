@@ -166,12 +166,37 @@
     function hideModal(modal) {
         modal.style.visibility = "hidden";
     }
-    function constructHeader(addTaskModal) {
-        const header = Header();
+    function Image(src, width, height) {
+        const img = document.createElement("img");
+        img.src = src; // Set the URL of the image
+        if(width) img.width = width; // Set the width of the image
+        if(height) img.height = height; // Set the height of the image
+        return img;
+    }
+    function WeatherWidget() {
+        const row1 = Container({ classNames: ["row", "header__weather"] });
+        fetch('https://api.weatherapi.com/v1/current.json?key=65617eb0a32644169e561914231904&q=Tbilisi&aqi=no')
+            .then(response => response.json())
+            .then(data => {
+                const weatherIcon = Image(data.current.condition.icon, 57);
+                const temp = Container({ classNames: ["header__weather-temperature"] });
+                const cityLabel = Container({ classNames: ["header__city"] });
+                cityLabel.innerText = "Tbilisi";
+                temp.innerText = data.current.temp_c + "°C";
+                row1.append(weatherIcon, temp, cityLabel);
+                console.log('row1: ', row1);
+            });
 
+        return row1;
+    }
+    function constructHeader(addTaskModal) {
+        const row1 = Container({ classNames: ["row", "header__top"] });
+        const header = Header();
+        const weatherWidget = WeatherWidget();
         const h1 = Heading({ text: "To Do List", type: 1 });
         h1.classList.add("header__title");
-        header.append(h1);
+        row1.append(h1, weatherWidget);
+        header.append(row1);
         const headerMain = Container({ classNames: ["header__main"] });
         const search = SearchInput("Search Task");
         search.classList.add("search-input");
@@ -339,7 +364,7 @@
      */
     function App() {
         const div = document.createElement("div");
-        
+
         async function initilize() {
             IDCount = await fetchIDCounter();
             const addTaskModal = constructModal(addCurrentTask);
@@ -371,7 +396,7 @@
                 setTasks(newTasks, state);
                 await fetch('http://localhost:3004/tasks/' + currentTask.id, {
                     method: 'DELETE'
-                  })
+                })
             }
 
             async function transferCurrentTask(currentTask) {
@@ -382,35 +407,35 @@
                 await fetch('http://localhost:3004/tasks/' + currentTask.id, {
                     method: 'PUT',
                     headers: {
-                      'Content-Type': 'application/json'
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify( currentTask )
-                  })
+                    body: JSON.stringify(currentTask)
+                })
             }
 
-             function addCurrentTask(title, deadline, tag) {
+            function addCurrentTask(title, deadline, tag) {
                 const task = { title, deadline, tag, isCompleted: false };
                 setTasks([...currentTasks, task], state);
                 hideModal(addTaskModal);
                 IDCount++;
-                 async function postTask(){
-                     await fetch('http://localhost:3004/tasks', {
-                         method: 'POST',
-                         headers: {
-                             'Content-Type': 'application/json'
-                         },
-                         body: JSON.stringify({ "id": IDCount, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
-                     }).then(
-                         fetch('http://localhost:3004/counter', {
-                        method: 'PUT',
+                async function postTask() {
+                    await fetch('http://localhost:3004/tasks', {
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ "count": IDCount })
-                        })); 
+                        body: JSON.stringify({ "id": IDCount, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
+                    }).then(
+                        fetch('http://localhost:3004/counter', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ "count": IDCount })
+                        }));
                 }
-                 postTask();
-               
+                postTask();
+
             }
 
             main.append(Heading({ text: "Completed Tasks", type: 2 }));
