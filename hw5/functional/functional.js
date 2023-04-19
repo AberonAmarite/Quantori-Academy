@@ -173,17 +173,16 @@
         if (height) img.height = height; // Set the height of the image
         return img;
     }
-    function getUserLocation(latitude, longitude) {
+    function getUserLocation() {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject("Geolocation is not supported by your browser");
             } else {
                 navigator.geolocation.getCurrentPosition(
                     position => {
-                        latitude = position.coords.latitude;
-                        longitude = position.coords.longitude;
-                        console.log("latitude: ", latitude);
-                        console.log("longitude: ", longitude);
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        
                         resolve({ latitude, longitude });
                     },
                     error => {
@@ -204,23 +203,25 @@
           });
       }
     function WeatherWidget() {
-        let latitude = 41.6938, longitude = 44.8015;
-
+        let defaultLatitude = 41.6938, defaultLlongitude = 44.8015;
+        const displayWeather = (data) => {
+            const temp = Container({ classNames: ["header__weather-temperature"] });
+            const cityLabel = Container({ classNames: ["header__city"] });
+            const weatherIcon = Image(data.current.condition.icon, 57);
+            cityLabel.innerText = data.location.name;
+            temp.innerText = data.current.temp_c + "°C";
+            row1.append(weatherIcon, temp, cityLabel);
+        }
         const row1 = Container({ classNames: ["row", "header__weather"] });
-        getUserLocation(latitude, longitude)
-            .catch(() => { })
-            .finally(() => {
-                console.log("HIIIFJDSO");
-                getWeatherInfo(latitude, longitude)
-                    .then((data) => {
-                        const temp = Container({ classNames: ["header__weather-temperature"] });
-                        const cityLabel = Container({ classNames: ["header__city"] });
-                        const weatherIcon = Image(data.current.condition.icon, 57);
-                        cityLabel.innerText = data.location.name;
-                        temp.innerText = data.current.temp_c + "°C";
-                        row1.append(weatherIcon, temp, cityLabel);
-                        console.log('row1: ', row1);
-                    }).catch(() => { console.log("Some problems")});
+        getUserLocation()
+            .catch(() => { console.log("location problem")})
+            .then((location) => {
+                getWeatherInfo(location.latitude, location.longitude)
+                    .then(displayWeather).catch(() => { });
+            })
+            .catch(() => {
+                getWeatherInfo(defaultLatitude, defaultLlongitude)
+                    .then(displayWeather).catch(() => { });
             });
             return row1;
     };
@@ -385,19 +386,17 @@ function constructModal(addCurrentTask) {
 async function fetchTasksFromServer() {
     const response = await fetch('http://localhost:3004/tasks');
     const data = await response.json();
-    console.log('data: ', data);
     return data;
 }
 async function fetchIDCounter() {
-    const response = await fetch('http://localhost:3004/counter')
-        .then((response) => response.json())
-        .then(data => {
-            console.log('data: ', data.count);
-            return data.count;
-        })
-        .catch(() => {
-            document.getElementById("root").append(Heading({ text: "Sorry! We are experiencing a server error", type: 1 }));
-        });
+    try {
+        const response = await fetch('http://localhost:3004/counter');
+        const data = await response.json();
+        return data.count;
+    } catch (error) {
+        console.error("Error fetching ID counter:", error);
+        document.getElementById("root").append(Heading({ text: "Sorry! We are experiencing a server error", type: 1 }));
+    }
 
 }
 /**
@@ -409,16 +408,17 @@ function App() {
 
     async function initilize() {
         IDCount = await fetchIDCounter();
+       
         const addTaskModal = constructModal(addCurrentTask);
         hideModal(addTaskModal);
         const fetchedTasks = await fetchTasksFromServer();
         const [tasks, setTasks] = useState(fetchedTasks || []);
-        console.log(state);
-        console.log('tasks: ', tasks);
+        if (IDCount == null) {
+            IDCount = (new Date()).getMilliseconds();
+            // emergency measure
+        }
         let completedTasks = tasks.filter((task) => task.isCompleted);
-        console.log('completedTasks: ', completedTasks);
         let currentTasks = tasks.filter((task) => !task.isCompleted);
-        console.log('currentTasks: ', currentTasks);
 
         const main = document.createElement("main", { classNames: ["main"] });
         div.append(constructHeader(addTaskModal), main);

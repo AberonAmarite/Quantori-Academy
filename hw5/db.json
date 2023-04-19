@@ -1,21 +1,8 @@
 {
   "tasks": [
-    {
-      "id": 16,
-      "title": "hf",
-      "deadline": "2023-04-19",
-      "tag": "tag",
-      "isCompleted": true
-    },
-    {
-      "id": 17,
-      "title": "hfh",
-      "deadline": "2023-04-19",
-      "tag": "tag",
-      "isCompleted": true
-    }
+  
   ],
   "counter": {
-    "count": null
+    "count": 0
   }
 }
