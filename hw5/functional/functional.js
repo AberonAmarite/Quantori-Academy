@@ -169,303 +169,345 @@
     function Image(src, width, height) {
         const img = document.createElement("img");
         img.src = src; // Set the URL of the image
-        if(width) img.width = width; // Set the width of the image
-        if(height) img.height = height; // Set the height of the image
+        if (width) img.width = width; // Set the width of the image
+        if (height) img.height = height; // Set the height of the image
         return img;
     }
+    function getUserLocation(latitude, longitude) {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject("Geolocation is not supported by your browser");
+            } else {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        latitude = position.coords.latitude;
+                        longitude = position.coords.longitude;
+                        console.log("latitude: ", latitude);
+                        console.log("longitude: ", longitude);
+                        resolve({ latitude, longitude });
+                    },
+                    error => {
+                        console.log("Unable to retrieve your location");
+                        reject(error);
+                    }
+                );
+            }
+        });
+    }
+    function getWeatherInfo(latitude, longitude) {
+        return fetch(`https://api.weatherapi.com/v1/current.json?key=65617eb0a32644169e561914231904&q=${latitude},${longitude}&aqi=no`)
+          .then(response => response.json())
+          .then(data => {
+            const location = data.location;
+            const current = data.current;
+            return { location, current };
+          });
+      }
     function WeatherWidget() {
+        let latitude = 41.6938, longitude = 44.8015;
+
         const row1 = Container({ classNames: ["row", "header__weather"] });
-        fetch('https://api.weatherapi.com/v1/current.json?key=65617eb0a32644169e561914231904&q=Tbilisi&aqi=no')
-            .then(response => response.json())
-            .then(data => {
-                const weatherIcon = Image(data.current.condition.icon, 57);
-                const temp = Container({ classNames: ["header__weather-temperature"] });
-                const cityLabel = Container({ classNames: ["header__city"] });
-                cityLabel.innerText = "Tbilisi";
-                temp.innerText = data.current.temp_c + "°C";
-                row1.append(weatherIcon, temp, cityLabel);
-                console.log('row1: ', row1);
+        getUserLocation(latitude, longitude)
+            .catch(() => { })
+            .finally(() => {
+                console.log("HIIIFJDSO");
+                getWeatherInfo(latitude, longitude)
+                    .then((data) => {
+                        const temp = Container({ classNames: ["header__weather-temperature"] });
+                        const cityLabel = Container({ classNames: ["header__city"] });
+                        const weatherIcon = Image(data.current.condition.icon, 57);
+                        cityLabel.innerText = data.location.name;
+                        temp.innerText = data.current.temp_c + "°C";
+                        row1.append(weatherIcon, temp, cityLabel);
+                        console.log('row1: ', row1);
+                    }).catch(() => { console.log("Some problems")});
             });
+            return row1;
+    };
 
-        return row1;
-    }
     function constructHeader(addTaskModal) {
-        const row1 = Container({ classNames: ["row", "header__top"] });
-        const header = Header();
-        const weatherWidget = WeatherWidget();
-        const h1 = Heading({ text: "To Do List", type: 1 });
-        h1.classList.add("header__title");
-        row1.append(h1, weatherWidget);
-        header.append(row1);
-        const headerMain = Container({ classNames: ["header__main"] });
-        const search = SearchInput("Search Task");
-        search.classList.add("search-input");
-        function searchResults(tasks, searchValue, titleSelector) {
-            for (let i = 0; i < tasks.length; i++) {
-                const taskTitle = tasks[i].querySelector(titleSelector).textContent.toLowerCase();
-                if (taskTitle.includes(searchValue)) {
-                    tasks[i].classList.remove("display-none");
-                } else {
-                    tasks[i].classList.add("display-none");
-                }
+    const row1 = Container({ classNames: ["row", "header__top"] });
+    const header = Header();
+    const weatherWidget = WeatherWidget();
+    const h1 = Heading({ text: "To Do List", type: 1 });
+    h1.classList.add("header__title");
+    row1.append(h1, weatherWidget);
+    header.append(row1);
+    const headerMain = Container({ classNames: ["header__main"] });
+    const search = SearchInput("Search Task");
+    search.classList.add("search-input");
+    function searchResults(tasks, searchValue, titleSelector) {
+        for (let i = 0; i < tasks.length; i++) {
+            const taskTitle = tasks[i].querySelector(titleSelector).textContent.toLowerCase();
+            if (taskTitle.includes(searchValue)) {
+                tasks[i].classList.remove("display-none");
+            } else {
+                tasks[i].classList.add("display-none");
             }
         }
-        search.oninput = () => {
-            const searchValue = search.value.toLowerCase();
-            const currentTasks = document.getElementsByClassName("current");
-            const completedTasks = document.getElementsByClassName("completed");
-            searchResults(currentTasks, searchValue, ".current__title");
-            searchResults(completedTasks, searchValue, ".completed__title");
-
-        }
-        const newTaskBtn = Button({
-            text: "+ New Task", onClick: () => {
-                showModal(addTaskModal);
-            }
-        });
-        newTaskBtn.classList.add("header__new-task");
-        headerMain.append(search, newTaskBtn);
-        header.append(headerMain);
-        return header;
     }
+    search.oninput = () => {
+        const searchValue = search.value.toLowerCase();
+        const currentTasks = document.getElementsByClassName("current");
+        const completedTasks = document.getElementsByClassName("completed");
+        searchResults(currentTasks, searchValue, ".current__title");
+        searchResults(completedTasks, searchValue, ".completed__title");
 
-    function constructModal(addCurrentTask) {
-        // Create the modal
-        let modal = Container({ classNames: ["modal"] });
-
-        // Create the modal content
-        let modalContent = Container({ classNames: ["modal-content"] });
-
-        // Create the title
-        let title = Heading({ text: "Add Task", type: 2 })
-        modalContent.appendChild(title);
-
-        // Create the form
-        let form = document.createElement("form");
-
-        let taskNameInput = SearchInput("Task Title");
-        taskNameInput.type = "text";
-        taskNameInput.id = "taskName";
-        taskNameInput.classList.add("search-input");
-        taskNameInput.classList.add("modal__task-title");
-        form.appendChild(taskNameInput);
-
-        // Create the tags buttons
-        let tagsContainer = Container({ classNames: ["modal__tags"] });
-        let selectedTagName = "tag";
-
-        for (let i = 0; i < tagNames.length; i++) {
-            let tagButton = Button({
-                text: tagNames[i],
-                onClick: (event) => {
-                    event.preventDefault();
-                    selectedTagName = tagNames[i];
-                    const color = window.getComputedStyle(tagButton).getPropertyValue('color');
-                    tagButton.style.border = `1px solid ${color}`;
-                    for (element of tagsContainer.getElementsByClassName("tag")) {
-                        if (element.innerHTML != selectedTagName) {
-                            element.style.border = "1px solid white";
-                        }
-                    };
-                }
-            });
-            tagButton.classList.add("tag", `tag-${tagNames[i]}`);
-            tagButton.id = tagNames[i];
-            tagsContainer.appendChild(tagButton);
+    }
+    const newTaskBtn = Button({
+        text: "+ New Task", onClick: () => {
+            showModal(addTaskModal);
         }
+    });
+    newTaskBtn.classList.add("header__new-task");
+    headerMain.append(search, newTaskBtn);
+    header.append(headerMain);
+    return header;
+}
 
-        let deadlineDateInput = document.createElement("input");
-        deadlineDateInput.type = "date";
-        deadlineDateInput.id = "deadlineDate";
-        deadlineDateInput.name = "deadlineDate";
-        deadlineDateInput.style.visibility = "hidden";
-        deadlineDateInput.style.position = "absolute";
+function constructModal(addCurrentTask) {
+    // Create the modal
+    let modal = Container({ classNames: ["modal"] });
 
-        const today = new Date();
+    // Create the modal content
+    let modalContent = Container({ classNames: ["modal-content"] });
 
-        const todayArray = extractDateWithZeroes(today);
-        let currentDate = "" + `${todayArray[2]}-${todayArray[1]}-${todayArray[0]}`;
-        deadlineDateInput.defaultValue = currentDate;
+    // Create the title
+    let title = Heading({ text: "Add Task", type: 2 })
+    modalContent.appendChild(title);
 
-        const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
+    // Create the form
+    let form = document.createElement("form");
 
+    let taskNameInput = SearchInput("Task Title");
+    taskNameInput.type = "text";
+    taskNameInput.id = "taskName";
+    taskNameInput.classList.add("search-input");
+    taskNameInput.classList.add("modal__task-title");
+    form.appendChild(taskNameInput);
 
-        let deadlineDateSubstituteStr = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
-        let deadlineDateSubstitute = Button({
-            text: "", onClick: (event) => {
-                deadlineDateInput.showPicker();
+    // Create the tags buttons
+    let tagsContainer = Container({ classNames: ["modal__tags"] });
+    let selectedTagName = "tag";
+
+    for (let i = 0; i < tagNames.length; i++) {
+        let tagButton = Button({
+            text: tagNames[i],
+            onClick: (event) => {
                 event.preventDefault();
+                selectedTagName = tagNames[i];
+                const color = window.getComputedStyle(tagButton).getPropertyValue('color');
+                tagButton.style.border = `1px solid ${color}`;
+                for (element of tagsContainer.getElementsByClassName("tag")) {
+                    if (element.innerHTML != selectedTagName) {
+                        element.style.border = "1px solid white";
+                    }
+                };
             }
         });
-        deadlineDateSubstitute.className = "modal__deadline";
-        const dateText = Paragraph({ text: deadlineDateSubstituteStr });
-        deadlineDateSubstitute.append(dateText, deadlineDateInput);
-        function changeDateSubsitute() {
-            const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
-            dateText.innerText = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
+        tagButton.classList.add("tag", `tag-${tagNames[i]}`);
+        tagButton.id = tagNames[i];
+        tagsContainer.appendChild(tagButton);
+    }
+
+    let deadlineDateInput = document.createElement("input");
+    deadlineDateInput.type = "date";
+    deadlineDateInput.id = "deadlineDate";
+    deadlineDateInput.name = "deadlineDate";
+    deadlineDateInput.style.visibility = "hidden";
+    deadlineDateInput.style.position = "absolute";
+
+    const today = new Date();
+
+    const todayArray = extractDateWithZeroes(today);
+    let currentDate = "" + `${todayArray[2]}-${todayArray[1]}-${todayArray[0]}`;
+    deadlineDateInput.defaultValue = currentDate;
+
+    const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
+
+
+    let deadlineDateSubstituteStr = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
+    let deadlineDateSubstitute = Button({
+        text: "", onClick: (event) => {
+            deadlineDateInput.showPicker();
+            event.preventDefault();
+        }
+    });
+    deadlineDateSubstitute.className = "modal__deadline";
+    const dateText = Paragraph({ text: deadlineDateSubstituteStr });
+    deadlineDateSubstitute.append(dateText, deadlineDateInput);
+    function changeDateSubsitute() {
+        const dateArray = extractDateWithZeroes(new Date(deadlineDateInput.value));
+        dateText.innerText = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
+
+    }
+    deadlineDateInput.onchange = changeDateSubsitute;
+    const row1 = Container({ classNames: ["row", "modal__row1"] }), row2 = Container({ classNames: ["row", "modal__row2"] });
+    row1.append(tagsContainer, deadlineDateSubstitute);
+    form.append(row1);
+    // Create the Add Task and Cancel buttons
+    let addTaskButton = Button({
+        text: "Add Task", onClick: () => {
+            addCurrentTask(taskNameInput.value, deadlineDateInput.value, selectedTagName);
 
         }
-        deadlineDateInput.onchange = changeDateSubsitute;
-        const row1 = Container({ classNames: ["row", "modal__row1"] }), row2 = Container({ classNames: ["row", "modal__row2"] });
-        row1.append(tagsContainer, deadlineDateSubstitute);
-        form.append(row1);
-        // Create the Add Task and Cancel buttons
-        let addTaskButton = Button({
-            text: "Add Task", onClick: () => {
-                addCurrentTask(taskNameInput.value, deadlineDateInput.value, selectedTagName);
+    });
+    addTaskButton.type = "button";
+    addTaskButton.id = "addTask";
+    addTaskButton.classList.add("modal__add-task");
 
-            }
+    let cancelButton = Button({
+        text: "Cancel", onClick: () => {
+            hideModal(modal);
+        }
+    });
+    cancelButton.type = "button";
+    cancelButton.id = "cancel";
+    cancelButton.classList.add("modal__cancel");
+
+    taskNameInput.oninput = () => {
+        if (taskNameInput.value.length) {
+            addTaskButton.classList.add("modal__add-task--complete");
+        } else {
+            addTaskButton.classList.remove("modal__add-task--complete");
+        }
+    }
+
+
+    row2.append(cancelButton, addTaskButton);
+    form.append(row2);
+    modalContent.appendChild(form);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    return modal;
+}
+async function fetchTasksFromServer() {
+    const response = await fetch('http://localhost:3004/tasks');
+    const data = await response.json();
+    console.log('data: ', data);
+    return data;
+}
+async function fetchIDCounter() {
+    const response = await fetch('http://localhost:3004/counter')
+        .then((response) => response.json())
+        .then(data => {
+            console.log('data: ', data.count);
+            return data.count;
+        })
+        .catch(() => {
+            document.getElementById("root").append(Heading({ text: "Sorry! We are experiencing a server error", type: 1 }));
         });
-        addTaskButton.type = "button";
-        addTaskButton.id = "addTask";
-        addTaskButton.classList.add("modal__add-task");
 
-        let cancelButton = Button({
-            text: "Cancel", onClick: () => {
-                hideModal(modal);
-            }
-        });
-        cancelButton.type = "button";
-        cancelButton.id = "cancel";
-        cancelButton.classList.add("modal__cancel");
+}
+/**
+ * App container
+ * @returns {HTMLDivElement} - The app container
+ */
+function App() {
+    const div = document.createElement("div");
 
-        taskNameInput.oninput = () => {
-            if (taskNameInput.value.length) {
-                addTaskButton.classList.add("modal__add-task--complete");
-            } else {
-                addTaskButton.classList.remove("modal__add-task--complete");
-            }
+    async function initilize() {
+        IDCount = await fetchIDCounter();
+        const addTaskModal = constructModal(addCurrentTask);
+        hideModal(addTaskModal);
+        const fetchedTasks = await fetchTasksFromServer();
+        const [tasks, setTasks] = useState(fetchedTasks || []);
+        console.log(state);
+        console.log('tasks: ', tasks);
+        let completedTasks = tasks.filter((task) => task.isCompleted);
+        console.log('completedTasks: ', completedTasks);
+        let currentTasks = tasks.filter((task) => !task.isCompleted);
+        console.log('currentTasks: ', currentTasks);
+
+        const main = document.createElement("main", { classNames: ["main"] });
+        div.append(constructHeader(addTaskModal), main);
+        main.append(Heading({ text: "Current Tasks", type: 2 }));
+        if (currentTasks.length > 0) {
+            const currentTasksList = Container({ classNames: [] });
+            currentTasks.forEach((currentTask) => {
+                currentTasksList.append(CurrentTask(currentTask, removeCurrentTask, transferCurrentTask));
+            });
+            main.append(currentTasksList);
+        } else {
+            main.append(Paragraph({ text: "No current tasks" }));
         }
 
+        async function removeCurrentTask(currentTask) {
+            const newTasks = tasks.filter((task) => task !== currentTask);
+            setTasks(newTasks, state);
+            await fetch('http://localhost:3004/tasks/' + currentTask.id, {
+                method: 'DELETE'
+            })
+        }
 
-        row2.append(cancelButton, addTaskButton);
-        form.append(row2);
-        modalContent.appendChild(form);
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
+        async function transferCurrentTask(currentTask) {
+            tasks.forEach((task) => {
+                if (task === currentTask) task.isCompleted = true;
+            });
+            renderApp();
+            await fetch('http://localhost:3004/tasks/' + currentTask.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(currentTask)
+            })
+        }
 
-        return modal;
-    }
-    async function fetchTasksFromServer() {
-        const response = await fetch('http://localhost:3004/tasks');
-        const data = await response.json();
-        console.log('data: ', data);
-        return data;
-    }
-    async function fetchIDCounter() {
-        const response = await fetch('http://localhost:3004/counter').catch((error) => console.log(error));
-        const data = await response.json();
-        console.log('data: ', data.count);
-        return data.count;
-    }
-    /**
-     * App container
-     * @returns {HTMLDivElement} - The app container
-     */
-    function App() {
-        const div = document.createElement("div");
-
-        async function initilize() {
-            IDCount = await fetchIDCounter();
-            const addTaskModal = constructModal(addCurrentTask);
+        function addCurrentTask(title, deadline, tag) {
+            const task = { title, deadline, tag, isCompleted: false };
+            setTasks([...currentTasks, task], state);
             hideModal(addTaskModal);
-            const fetchedTasks = await fetchTasksFromServer();
-            const [tasks, setTasks] = useState(fetchedTasks || []);
-            console.log(state);
-            console.log('tasks: ', tasks);
-            let completedTasks = tasks.filter((task) => task.isCompleted);
-            console.log('completedTasks: ', completedTasks);
-            let currentTasks = tasks.filter((task) => !task.isCompleted);
-            console.log('currentTasks: ', currentTasks);
-
-            const main = document.createElement("main", { classNames: ["main"] });
-            div.append(constructHeader(addTaskModal), main);
-            main.append(Heading({ text: "Current Tasks", type: 2 }));
-            if (currentTasks.length > 0) {
-                const currentTasksList = Container({ classNames: [] });
-                currentTasks.forEach((currentTask) => {
-                    currentTasksList.append(CurrentTask(currentTask, removeCurrentTask, transferCurrentTask));
-                });
-                main.append(currentTasksList);
-            } else {
-                main.append(Paragraph({ text: "No current tasks" }));
-            }
-
-            async function removeCurrentTask(currentTask) {
-                const newTasks = tasks.filter((task) => task !== currentTask);
-                setTasks(newTasks, state);
-                await fetch('http://localhost:3004/tasks/' + currentTask.id, {
-                    method: 'DELETE'
-                })
-            }
-
-            async function transferCurrentTask(currentTask) {
-                tasks.forEach((task) => {
-                    if (task === currentTask) task.isCompleted = true;
-                });
-                renderApp();
-                await fetch('http://localhost:3004/tasks/' + currentTask.id, {
-                    method: 'PUT',
+            IDCount++;
+            async function postTask() {
+                await fetch('http://localhost:3004/tasks', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(currentTask)
-                })
-            }
-
-            function addCurrentTask(title, deadline, tag) {
-                const task = { title, deadline, tag, isCompleted: false };
-                setTasks([...currentTasks, task], state);
-                hideModal(addTaskModal);
-                IDCount++;
-                async function postTask() {
-                    await fetch('http://localhost:3004/tasks', {
-                        method: 'POST',
+                    body: JSON.stringify({ "id": IDCount, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
+                }).then(
+                    fetch('http://localhost:3004/counter', {
+                        method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ "id": IDCount, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
-                    }).then(
-                        fetch('http://localhost:3004/counter', {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ "count": IDCount })
-                        }));
-                }
-                postTask();
-
+                        body: JSON.stringify({ "count": IDCount })
+                    }));
             }
+            postTask();
 
-            main.append(Heading({ text: "Completed Tasks", type: 2 }));
-
-            if (completedTasks.length > 0) {
-                const completedTasksList = Container({ classNames: [] });
-                completedTasks.forEach((completedTask) => {
-                    completedTasksList.append(CompletedTask(completedTask));
-                });
-                main.append(completedTasksList);
-            } else {
-                main.append(Paragraph({ text: "No completed tasks" }));
-            }
         }
 
-        initilize();
+        main.append(Heading({ text: "Completed Tasks", type: 2 }));
 
-        return div;
+        if (completedTasks.length > 0) {
+            const completedTasksList = Container({ classNames: [] });
+            completedTasks.forEach((completedTask) => {
+                completedTasksList.append(CompletedTask(completedTask));
+            });
+            main.append(completedTasksList);
+        } else {
+            main.append(Paragraph({ text: "No completed tasks" }));
+        }
     }
 
-    /**
-     * Render the app.
-     * On change whole app is re-rendered.
-     */
-    function renderApp() {
-        const appContainer = document.getElementById("root");
-        appContainer.innerHTML = "";
-        appContainer.append(App());
-    }
+    initilize();
 
-    // initial render
-    renderApp();
-})();
+    return div;
+}
+
+/**
+ * Render the app.
+ * On change whole app is re-rendered.
+ */
+function renderApp() {
+    const appContainer = document.getElementById("root");
+    appContainer.innerHTML = "";
+    appContainer.append(App());
+}
+
+// initial render
+renderApp();
+}) ();

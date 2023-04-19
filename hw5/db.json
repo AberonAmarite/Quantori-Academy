@@ -5,7 +5,7 @@
       "title": "hf",
       "deadline": "2023-04-19",
       "tag": "tag",
-      "isCompleted": false
+      "isCompleted": true
     },
     {
       "id": 17,
@@ -16,6 +16,6 @@
     }
   ],
   "counter": {
-    "count": 17
+    "count": null
   }
 }
