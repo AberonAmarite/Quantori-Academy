@@ -1,4 +1,5 @@
 (function () {
+    require('../main.css');
     let state = undefined;
     let IDCount = 0;
     const tagNames = ["health", "work", "home", "other"];
@@ -435,7 +436,7 @@ function App() {
 
         async function removeCurrentTask(currentTask) {
             const newTasks = tasks.filter((task) => task !== currentTask);
-            setTasks(newTasks, state);
+            setTasks(newTasks);
             await fetch('http://localhost:3004/tasks/' + currentTask.id, {
                 method: 'DELETE'
             })
@@ -457,7 +458,7 @@ function App() {
 
         function addCurrentTask(title, deadline, tag) {
             const task = { title, deadline, tag, isCompleted: false };
-            setTasks([...currentTasks, task], state);
+            setTasks([...tasks, task]);
             hideModal(addTaskModal);
             IDCount++;
             async function postTask() {
