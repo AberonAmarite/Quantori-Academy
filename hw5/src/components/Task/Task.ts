@@ -1,20 +1,21 @@
 import './Task.css';
-import * as Utils from '../../utils.js';
-import * as Modal from '../Modal/Modal.js';
+import * as Utils from '../../utils';
+import * as Modal from '../Modal/Modal';
+import * as Interfaces from '../../interfaces'
 
-let tasks;
-let IDCount;
-let setTasks;
-let renderApp;
+let tasks: Interfaces.Task[];
+export let IDCount: number;
+let setTasks: (newValue: Interfaces.Task[]) => void;
+let renderApp: () => void;
 
-export function importTasks(tasksImported, IDCountImported, setTasksImported, renderAppImported) {
+export function importTasks(tasksImported: Interfaces.Task[], IDCountImported: number, setTasksImported: (newValue: Interfaces.Task[]) => void, renderAppImported: () => void) {
     tasks = tasksImported;
     IDCount = IDCountImported;
     setTasks = setTasksImported;
     renderApp = renderAppImported;
 }
 
-function Task(task, trashBtnCallback, transferCurrentTask) {
+function Task(task: Interfaces.Task, trashBtnCallback?: (currentTask: Interfaces.Task) => Promise<void>, transferCurrentTask?: (currentTask: Interfaces.Task) => Promise<void>) {
     let taskType = "completed";
     let checkboxCallback = () => { };
     if (trashBtnCallback) {
@@ -72,14 +73,14 @@ function Task(task, trashBtnCallback, transferCurrentTask) {
     return container;
 }
 
-export function CurrentTask(task, trashBtnCallback, transferCurrentTask) {
+export function CurrentTask(task: Interfaces.Task, trashBtnCallback: (currentTask: Interfaces.Task)=> Promise<void>, transferCurrentTask: (currentTask: Interfaces.Task) => Promise<void>) {
     return Task(task, trashBtnCallback, transferCurrentTask);
 }
-export function CompletedTask(task) {
-    return Task(task);
+export function CompletedTask(task: Interfaces.Task) {
+    return Task(task, null, null);
 }
 
-export async function removeCurrentTask(currentTask) {
+export async function removeCurrentTask(currentTask: Interfaces.Task): Promise<void> {
     const newTasks = tasks.filter((task) => task !== currentTask);
     setTasks(newTasks);
     await fetch('http://localhost:3004/tasks/' + currentTask.id, {
@@ -87,7 +88,7 @@ export async function removeCurrentTask(currentTask) {
     })
 }
 
-export async function transferCurrentTask(currentTask) {
+export async function transferCurrentTask(currentTask: Interfaces.Task): Promise<void> {
     tasks.forEach((task) => {
         if (task === currentTask) task.isCompleted = true;
     });
@@ -102,27 +103,31 @@ export async function transferCurrentTask(currentTask) {
     })
 }
 
-export function addCurrentTask(title, deadline, tag) {
-    const task = { title, deadline, tag, isCompleted: false };
-    setTasks([...tasks, task]);
-
-    IDCount++;
-    async function postTask() {
+export function addCurrentTask(id: number, title: string, deadline: Date, tag: string): void {
+    const task: Interfaces.Task = {id: id, title: title, deadline: deadline, tag: tag, isCompleted: false };
+    
+    async function postTask(): Promise<void> {
+        
         await fetch('http://localhost:3004/tasks', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ "id": IDCount, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
-        }).then(
+            body: JSON.stringify({ "id": id, "title": title, "deadline": deadline, "tag": tag, "isCompleted": false })
+        }).then((response: Response) => {
+            
             fetch('http://localhost:3004/counter', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ "count": IDCount })
-            }));
+                body: JSON.stringify({ "count": id+1 })
+            }).then(() => {
+                setTasks([...tasks, task]);
+            })
+        }
+            );
     }
     postTask();
-
+    
 }

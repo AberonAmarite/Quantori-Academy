@@ -1,10 +1,11 @@
-import * as Utils from '../../utils.js';
-import * as Modal from '../Modal/Modal.js'
+import * as Utils from '../../utils';
+import * as Modal from '../Modal/Modal';
+import * as Interfaces from '../../interfaces';
 require('./Header.css');
 
 function WeatherWidget() {
     let defaultLatitude = 41.6938, defaultLlongitude = 44.8015;
-    const displayWeather = (data) => {
+    const displayWeather = (data: {location: any;current: any;}) => {
         const temp = Utils.Container({ classNames: ["header__weather-temperature"] });
         const cityLabel = Utils.Container({ classNames: ["header__city"] });
         const weatherIcon = document.createElement("img");
@@ -18,7 +19,7 @@ function WeatherWidget() {
     const row1 = Utils.Container({ classNames: ["row", "header__weather"] });
     getUserLocation()
         .catch(() => { console.log("location problem")})
-        .then((location) => {
+        .then((location: {latitude: number; longitude: number;}) => {
             getWeatherInfo(location.latitude, location.longitude)
                 .then(displayWeather).catch(() => { });
         })
@@ -29,7 +30,7 @@ function WeatherWidget() {
         return row1;
 };
 
-function getUserLocation() {
+function getUserLocation(): Promise<{latitude: number; longitude: number;}>{
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
             reject("Geolocation is not supported by your browser");
@@ -49,17 +50,18 @@ function getUserLocation() {
         }
     });
 }
-function getWeatherInfo(latitude, longitude) {
+function getWeatherInfo(latitude: number, longitude: number):Promise<{location: any;current: any;}> {
     return fetch(`https://api.weatherapi.com/v1/current.json?key=65617eb0a32644169e561914231904&q=${latitude},${longitude}&aqi=no`)
       .then(response => response.json())
       .then(data => {
         const location = data.location;
-        const current = data.current;
+          const current = data.current;
+          console.log({ location, current });
         return { location, current };
       });
 }
   
-export function constructHeader(addTaskModal) {
+export function constructHeader(addTaskModal: HTMLElement) {
     const row1 = Utils.Container({ classNames: ["row", "header__top"] });
     const header = Utils.Header();
     const weatherWidget = WeatherWidget();
@@ -70,7 +72,7 @@ export function constructHeader(addTaskModal) {
     const headerMain = Utils.Container({ classNames: ["header__main"] });
     const search = Utils.SearchInput("Search Task");
     search.classList.add("search-input");
-    function searchResults(tasks, searchValue, titleSelector) {
+    function searchResults(tasks:  HTMLCollectionOf<Element>, searchValue: string, titleSelector: string) {
         for (let i = 0; i < tasks.length; i++) {
             const taskTitle = tasks[i].querySelector(titleSelector).textContent.toLowerCase();
             if (taskTitle.includes(searchValue)) {

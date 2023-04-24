@@ -1,8 +1,10 @@
-import * as Utils from '../../utils.js';
+import * as Utils from '../../utils';
+import * as Task from '../Task/Task'
+import * as Interfaces from '../../interfaces';
 import './Modal.css';
 const tagNames = ["health", "work", "home", "other"];
 
-export function constructModal(addCurrentTask) {
+export function constructModal(addCurrentTask: (id: number, title: string, deadline: Date, tag: string) =>void ) {
     // Create the modal
     let modal = Utils.Container({ classNames: ["modal"] });
 
@@ -28,18 +30,19 @@ export function constructModal(addCurrentTask) {
     let selectedTagName = "tag";
 
     for (let i = 0; i < tagNames.length; i++) {
-        let tagButton =Utils.Button({
+        let tagButton = Utils.Button({
             text: tagNames[i],
-            onClick: (event) => {
+            onClick: (event: MouseEvent) => {
                 event.preventDefault();
                 selectedTagName = tagNames[i];
                 const color = window.getComputedStyle(tagButton).getPropertyValue('color');
                 tagButton.style.border = `1px solid ${color}`;
-                for (let element of tagsContainer.getElementsByClassName("tag")) {
+                const elements = Array.from(tagsContainer.getElementsByClassName("tag"));
+                elements.forEach((element: HTMLElement) => {
                     if (element.innerHTML != selectedTagName) {
                         element.style.border = "1px solid white";
                     }
-                };
+                });
             }
         });
         tagButton.classList.add("tag", `tag-${tagNames[i]}`);
@@ -65,7 +68,7 @@ export function constructModal(addCurrentTask) {
 
     let deadlineDateSubstituteStr = `${dateArray[0]}.${dateArray[1]}.${dateArray[2]}`;
     let deadlineDateSubstitute =Utils.Button({
-        text: "", onClick: (event) => {
+        text: "", onClick: (event: MouseEvent) => {
             deadlineDateInput.showPicker();
             event.preventDefault();
         }
@@ -85,7 +88,7 @@ export function constructModal(addCurrentTask) {
     // Create the Add Task and Cancel buttons
     let addTaskButton =Utils.Button({
         text: "Add Task", onClick: () => {
-            addCurrentTask(taskNameInput.value, deadlineDateInput.value, selectedTagName);
+            Task.addCurrentTask(Task.IDCount, taskNameInput.value, new Date(deadlineDateInput.value), selectedTagName);
             hideModal(modal);
         }
     });
@@ -120,11 +123,11 @@ export function constructModal(addCurrentTask) {
     return modal;
 }
 
-export function showModal(modal) {
+export function showModal(modal: HTMLElement) {
     modal.style.visibility = "visible";
 }
 
-export function hideModal(modal) {
+export function hideModal(modal: HTMLElement) {
     modal.style.visibility = "hidden";
 }
 

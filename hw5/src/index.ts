@@ -1,16 +1,15 @@
-import * as Task from './components/Task/Task.js';
-import * as Header from './components/Header/Header.js';
-import * as Modal from './components/Modal/Modal.js';
-import * as Utils from './utils.js';
+import * as Task from './components/Task/Task';
+import * as Header from './components/Header/Header';
+import * as Modal from './components/Modal/Modal';
+import * as Utils from './utils';
+import * as Interfaces from './interfaces'
 import '../main.css'
 
 (function () {
     
-    
 
-    let state = undefined;
-    let IDCount = 0;
-
+    let state: Interfaces.Task[] = undefined;
+    let IDCount: number = 0;
 
     /**
      * Global application state
@@ -18,9 +17,9 @@ import '../main.css'
      * @param {T} initialValue
      * @returns {[T, function(T): void]}
      */
-    function useState(initialValue) {
+    function useState(initialValue: Interfaces.Task[]): [Interfaces.Task[], (newValue: Interfaces.Task[]) => void] {
         state = state || initialValue;
-        function setValue(newValue) {
+        function setValue(newValue: Interfaces.Task[]): void {
             state = newValue;
             renderApp();
         }
@@ -29,19 +28,20 @@ import '../main.css'
     }
 
 
-async function fetchTasksFromServer() {
+async function fetchTasksFromServer() : Promise<Interfaces.Task[]>{
     const response = await fetch('http://localhost:3004/tasks');
-    const data = await response.json();
+    const data: Interfaces.Task[] = await response.json();
     return data;
 }
-async function fetchIDCounter() {
+async function fetchIDCounter(): Promise<number> {
     try {
         const response = await fetch('http://localhost:3004/counter');
-        const data = await response.json();
+        const data: Interfaces.Counter = await response.json();
         return data.count;
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error fetching ID counter:", error);
         document.getElementById("root").append(Utils.Heading({ text: "Sorry! We are experiencing a server error", type: 1 }));
+        return -1;
     }
 
 }
@@ -49,26 +49,26 @@ async function fetchIDCounter() {
  * App Utils.container
  * @returns {HTMLDivElement} - The app Utils.container
  */
-    function App() {
+    function App(): HTMLElement {
     const div = document.createElement("div");
 
-    async function initilize() {
+    async function initilize(): Promise<void> {
         IDCount = await fetchIDCounter();
-       
-       
-       
-        const fetchedTasks = await fetchTasksFromServer();
-        const [tasks, setTasks] = useState(fetchedTasks || []);
-        if (IDCount == null) {
+        console.log(IDCount);
+        if (IDCount === -1) {
             IDCount = (new Date()).getMilliseconds();
             // emergency measure
         }
+        
+        const fetchedTasks = await fetchTasksFromServer();
+        const [tasks, setTasks] = useState(fetchedTasks || []);
+        
         Task.importTasks(tasks, IDCount, setTasks, renderApp);
         const addTaskModal = Modal.constructModal(Task.addCurrentTask);
         let completedTasks = tasks.filter((task) => task.isCompleted);
         let currentTasks = tasks.filter((task) => !task.isCompleted);
 
-        const main = document.createElement("main", { classNames: ["main"] });
+        const main = document.createElement("main");
         div.append(Header.constructHeader(addTaskModal), main);
         main.append(Utils.Heading({ text: "Current Tasks", type: 2 }));
         if (currentTasks.length > 0) {
@@ -104,7 +104,7 @@ async function fetchIDCounter() {
  * Render the app.
  * On change whole app is re-rendered.
  */
-function renderApp() {
+function renderApp(): void {
     const appContainer = document.getElementById("root");
     appContainer.innerHTML = "";
     appContainer.append(App());
