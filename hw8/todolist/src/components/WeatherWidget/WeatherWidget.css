@@ -1,0 +1,16 @@
+.header__weather{
+    align-items: center;
+}
+
+.header__weather-temperature{
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 36px;
+    width: 64px;
+    margin: 0 82px 0 24px;
+}
+.header__city{
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 36px;
+}

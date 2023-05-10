@@ -1,16 +1,16 @@
-@font-face {
-    font-family: Nunito;
-    src: url(../public/fonts/Nunito.ttf);
-  }
-
-body{
-    font-family: 'Nunito', sans-serif;
+.header__main{
+    display: flex;
+    align-items: center;
+}
+.header__title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 36px;
+}
+.header__top{
+    justify-content: space-between;
 }
 
-  button{
-    border: none;
-    font-family: 'Nunito', sans-serif;
-}
 .search-input{
     padding: 16px 21px;
 
@@ -26,6 +26,6 @@ body{
     color: #000;
     margin-right: 40px;
 }
-#root {
-  padding: 0 12.5%;
+.search-input::placeholder{
+    color: #838383;
 }
