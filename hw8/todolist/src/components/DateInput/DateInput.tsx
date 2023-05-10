@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const DateInput = () => {
-  const [startDate, setStartDate] = useState(new Date());
+interface Props {
+  onChange?: (date: Date) => void;
+}
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // handle text input change here
-    console.log(e);
-  };
+const DateInput = ({ onChange }: Props) => {
+  const [startDate, setStartDate] = useState(new Date());
 
   return (
     <DatePicker
       selected={startDate}
-      onChange={(date: Date) => setStartDate(date)}
+      onChange={(date: Date) => {
+        setStartDate(date);
+        if (onChange) onChange(date);
+      }}
       dateFormat="dd.MM.yyyy"
       showPopperArrow={false}
       customInput={
@@ -26,7 +28,6 @@ const DateInput = () => {
               new MouseEvent("click", { bubbles: true })
             );
           }}
-          onChange={handleInputChange}
         />
       }
     />

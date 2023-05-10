@@ -4,13 +4,23 @@ import Button from "../Button/Button";
 import DateInput from "../DateInput/DateInput";
 
 import "./Modal.css";
+import { Task } from "../../interfaces/Task";
 
 interface Props {
   modalVisibility: boolean;
   toggleModalVisibility: () => void;
+  onAddTask: (task: Task) => void;
 }
 
-const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
+const Modal = ({
+  modalVisibility,
+  toggleModalVisibility,
+  onAddTask,
+}: Props) => {
+  const [newTaskName, setNewTaskName] = useState("");
+  const [newDeadline, setNewDeadline] = useState(new Date());
+  const [newTag, setNewTag] = useState("tag");
+
   const [tagColors, setTagColors] = useState(["#FFF", "#FFF", "#FFF", "#FFF"]);
   const tags = ["health", "work", "home", "other"];
   const uniqueTagColors = ["#0053CF", "#9747FF", "#639462", "#EA8C00"];
@@ -24,13 +34,24 @@ const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
         style={{
           border: `1px solid ${tagColors[index]}`,
         }}
-        onClick={() => setTagColors(nextTagColors)}
+        onClick={() => {
+          setTagColors(nextTagColors);
+          setNewTag(tag);
+        }}
         key={index}
       >
         {tag}
       </button>
     );
   });
+
+  const handleTaskNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTaskName(event.target.value);
+  };
+
+  const handleDeadlineChange = (date: Date) => {
+    setNewDeadline(date);
+  };
 
   return (
     <div
@@ -39,16 +60,33 @@ const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
     >
       <div className="modal-content">
         <h2>Add Task</h2>
-        <TextInput placeholder="Task Title" className="modal__task-title" />
+        <TextInput
+          placeholder="Task Title"
+          className="modal__task-title"
+          onChange={handleTaskNameChange}
+        />
         <div className="row modal__row1">
           <div className="modal__tags">{tagButtons}</div>
-          <DateInput></DateInput>
+          <DateInput onChange={handleDeadlineChange}></DateInput>
         </div>
         <div className="row modal__row2">
           <Button className="modal__cancel" onClick={toggleModalVisibility}>
             Cancel
           </Button>
-          <Button className="modal__add-task" onClick={toggleModalVisibility}>
+          <Button
+            className="modal__add-task"
+            onClick={() => {
+              toggleModalVisibility();
+              const task: Task = {
+                id: new Date().getMilliseconds(),
+                title: newTaskName,
+                tag: newTag,
+                deadline: newDeadline,
+                isCompleted: false,
+              };
+              onAddTask(task);
+            }}
+          >
             Add Task
           </Button>
         </div>
