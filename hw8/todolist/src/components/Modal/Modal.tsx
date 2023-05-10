@@ -5,21 +5,32 @@ import DateInput from "../DateInput/DateInput";
 
 import "./Modal.css";
 import { Task } from "../../interfaces/Task";
+import { addTask } from "../../taskSlice";
+import { useDispatch } from "react-redux";
 
 interface Props {
   modalVisibility: boolean;
   toggleModalVisibility: () => void;
-  onAddTask: (task: Task) => void;
 }
 
-const Modal = ({
-  modalVisibility,
-  toggleModalVisibility,
-  onAddTask,
-}: Props) => {
+const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
   const [newTaskName, setNewTaskName] = useState("");
   const [newDeadline, setNewDeadline] = useState(new Date());
   const [newTag, setNewTag] = useState("tag");
+
+  const dispatch = useDispatch();
+
+  const onAddTask = async (newTask: Task) => {
+    const response = await fetch("http://localhost:3004/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    });
+    await response.json();
+    dispatch(addTask(newTask));
+  };
 
   const [tagColors, setTagColors] = useState(["#FFF", "#FFF", "#FFF", "#FFF"]);
   const tags = ["health", "work", "home", "other"];

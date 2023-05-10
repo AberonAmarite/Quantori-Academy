@@ -27,29 +27,34 @@ const displayDate = (date: Date) => {
 
 const TaskComponent = ({ task, onDelete, onComplete }: Props) => {
   const { title, tag, deadline } = task;
+  const type = task.isCompleted ? "completed" : "current";
   return (
-    <div className="row current">
+    <div className={`row ${type}`}>
       <button
-        className="current__checkbox"
+        className={`${type}__checkbox`}
         onClick={() => {
           if (onComplete) onComplete(task);
         }}
       ></button>
-      <div className="column current__main-text">
-        <h3 className="current__title">{title}</h3>
+      <div className={`column ${type}__main-text`}>
+        <h3 className={`${type}__title`}>{title}</h3>
         <div className="row">
           <div className="">
             <div className={`tag tag-${tag}`}>{tag}</div>
           </div>
-          <div className="current__deadline">{displayDate(deadline)}</div>
+          <div className={`${type}__deadline`}>{displayDate(deadline)}</div>
         </div>
       </div>
-      <button
-        className="current__delete"
-        onClick={() => {
-          onDelete(task);
-        }}
-      ></button>
+      {task.isCompleted ? (
+        ""
+      ) : (
+        <button
+          className="current__delete"
+          onClick={() => {
+            onDelete(task);
+          }}
+        ></button>
+      )}
     </div>
   );
 };

@@ -2,32 +2,32 @@ import React, { useEffect } from "react";
 import TaskComponent from "../Task/TaskComponent";
 import { Task } from "../../interfaces/Task";
 
+import { useSelector, useDispatch } from "react-redux";
+import { fetchTasks, deleteTask, completeTask } from "../../taskSlice";
+import { RootState } from "../../store";
+
 interface Props {
   isCompleted: boolean;
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-  onComplete?: (currentTask: Task) => void;
 }
 
-const Tasks = ({ isCompleted, tasks, setTasks, onComplete }: Props) => {
+const Tasks = ({ isCompleted }: Props) => {
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const dispatch = useDispatch();
+
+  const handleComplete = (task: Task) => {
+    dispatch(completeTask(task));
+  };
+
   const handleDeleteTask = async (deletedTask: Task) => {
     await fetch(`http://localhost:3004/tasks/${deletedTask.id}`, {
       method: "DELETE",
     });
-    setTasks((prevTasks) =>
-      prevTasks.filter((task: Task) => task.id !== deletedTask.id)
-    );
+    dispatch(deleteTask(deletedTask));
   };
 
   useEffect(() => {
-    async function fetchTasksFromServer() {
-      const response = await fetch("http://localhost:3004/tasks");
-      const tasks = await response.json();
-      setTasks(tasks);
-    }
-    fetchTasksFromServer();
-  }, []);
-
+    dispatch(fetchTasks());
+  }, [dispatch]);
   return (
     <div>
       <h2>{isCompleted ? "Completed" : "Current"} Tasks</h2>
@@ -38,7 +38,7 @@ const Tasks = ({ isCompleted, tasks, setTasks, onComplete }: Props) => {
             key={task.id}
             task={task}
             onDelete={handleDeleteTask}
-            onComplete={onComplete}
+            onComplete={handleComplete}
           ></TaskComponent>
         ))}
     </div>
