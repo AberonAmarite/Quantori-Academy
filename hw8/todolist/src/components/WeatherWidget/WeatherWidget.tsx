@@ -66,7 +66,6 @@ function getWeatherData(
     .then((data) => {
       const location = data.location;
       const current = data.current;
-      console.log({ location, current });
       return { location, current };
     });
 }

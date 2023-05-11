@@ -42,7 +42,9 @@ const TaskComponent = ({ task, onDelete, onComplete }: Props) => {
           <div className="">
             <div className={`tag tag-${tag}`}>{tag}</div>
           </div>
-          <div className={`${type}__deadline`}>{displayDate(deadline)}</div>
+          <div className={`${type}__deadline`}>
+            {displayDate(new Date(deadline))}
+          </div>
         </div>
       </div>
       {task.isCompleted ? (

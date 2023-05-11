@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import TextInput from "../TextInput/TextInput";
 import Button from "../Button/Button";
 import DateInput from "../DateInput/DateInput";
+import { addTaskToServer } from "../Tasks/Tasks";
 
 import "./Modal.css";
 import { Task } from "../../interfaces/Task";
-import { addTask } from "../../taskSlice";
+import { addTask } from "../../store/taskSlice";
 import { useDispatch } from "react-redux";
 
 interface Props {
@@ -21,14 +22,7 @@ const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
   const dispatch = useDispatch();
 
   const onAddTask = async (newTask: Task) => {
-    const response = await fetch("http://localhost:3004/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newTask),
-    });
-    await response.json();
+    await addTaskToServer(newTask);
     dispatch(addTask(newTask));
   };
 
@@ -89,10 +83,10 @@ const Modal = ({ modalVisibility, toggleModalVisibility }: Props) => {
             onClick={() => {
               toggleModalVisibility();
               const task: Task = {
-                id: new Date().getMilliseconds(),
+                id: Date.now(),
                 title: newTaskName,
                 tag: newTag,
-                deadline: newDeadline,
+                deadline: newDeadline.toString(),
                 isCompleted: false,
               };
               onAddTask(task);
