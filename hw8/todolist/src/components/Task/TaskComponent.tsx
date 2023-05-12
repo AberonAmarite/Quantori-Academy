@@ -1,6 +1,12 @@
 import React from "react";
 import "./TaskComponent.css";
 import { Task } from "../../interfaces/Task";
+import {
+  setCurrentTaskId,
+  setModalType,
+  toggleModalVisibility,
+} from "../../store/taskSlice";
+import { useAppDispatch } from "../../store/hooks";
 
 interface Props {
   task: Task;
@@ -28,6 +34,9 @@ const displayDate = (date: Date) => {
 const TaskComponent = ({ task, onDelete, onComplete }: Props) => {
   const { title, tag, deadline } = task;
   const type = task.isCompleted ? "completed" : "current";
+
+  const dispatch = useAppDispatch();
+
   return (
     <div className={`row ${type}`}>
       <button
@@ -47,16 +56,26 @@ const TaskComponent = ({ task, onDelete, onComplete }: Props) => {
           </div>
         </div>
       </div>
-      {task.isCompleted ? (
-        ""
-      ) : (
+      <div className="action-buttons">
         <button
-          className="current__delete"
+          className="edit-button"
           onClick={() => {
-            onDelete(task);
+            dispatch(setModalType("Edit Task"));
+            dispatch(setCurrentTaskId(task.id));
+            dispatch(toggleModalVisibility());
           }}
         ></button>
-      )}
+        {task.isCompleted ? (
+          ""
+        ) : (
+          <button
+            className="current__delete"
+            onClick={() => {
+              onDelete(task);
+            }}
+          ></button>
+        )}
+      </div>
     </div>
   );
 };

@@ -29,3 +29,6 @@
 .search-input::placeholder{
     color: #838383;
 }
+.header__filters{
+    width: 500px;
+}

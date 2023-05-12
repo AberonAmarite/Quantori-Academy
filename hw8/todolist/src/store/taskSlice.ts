@@ -2,11 +2,17 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Task } from "../interfaces/Task";
 
 export interface TasksState {
-    tasks: Task[];
+  tasks: Task[];
+  modalType: string;
+  modalVisibility: boolean;
+  currentTaskId: number;
   }
 
 const initialState: TasksState = {
-    tasks: [],
+  tasks: [],
+  modalType: "Add Task",
+  modalVisibility: false,
+  currentTaskId: -1
   };
   
   const tasksSlice = createSlice({
@@ -19,6 +25,12 @@ const initialState: TasksState = {
       addTask: (state, action) => {
         state.tasks.push(action.payload);
       },
+      editTask: (state, action) => {
+        const updatedTask = action.payload;
+        state.tasks = state.tasks.map((task) =>
+          task.id === state.currentTaskId ? updatedTask : task
+        );
+      },
       deleteTask: (state, action) => {
         state.tasks = state.tasks.filter((task) => task.id !== action.payload.id);
       },
@@ -28,9 +40,18 @@ const initialState: TasksState = {
           task.isCompleted = true;
         }
       },
+      setModalType: (state, action) => {
+        state.modalType = action.payload;
+      },
+      toggleModalVisibility: (state) => {
+        state.modalVisibility = !state.modalVisibility;
+      },
+      setCurrentTaskId: (state, action) => {
+        state.currentTaskId = action.payload;
+      },
     },
   });
 
-  export const { setTasks, addTask, deleteTask, completeTask } = tasksSlice.actions;
+  export const { setTasks, addTask, deleteTask, completeTask, setModalType, toggleModalVisibility, editTask, setCurrentTaskId } = tasksSlice.actions;
 
   export default tasksSlice.reducer;

@@ -6,14 +6,22 @@
 .current__main-text, .completed__main-text{
     width: 100%;
 }
-.current__delete{
+.action-buttons{
     position: absolute;
-    left: 50%;
-    width: 13px;
+    left: 48%;
+    
+}
+.action-buttons > button{
     height: 14px;
-    cursor: pointer;
-    background: url(../../../public/svg/trash_default.svg) no-repeat center center;
+    width: 13px;
     background-size: 13px 14px;
+}
+.edit-button{
+    background: url(../../../public/svg/edit.svg) no-repeat center center;
+    margin-right: 5px;
+}
+.current__delete{
+    background: url(../../../public/svg/trash_default.svg) no-repeat center center;
 }
 .current__delete:hover{
     background-image: url(../../../public/svg/trash_hover.svg);
@@ -21,6 +29,7 @@
 .current__delete:active{
     background-image: url(../../../public/svg/trash_active.svg);
 }
+
 .current__checkbox, .completed__checkbox{
     width: 21px;
     height: 21px;

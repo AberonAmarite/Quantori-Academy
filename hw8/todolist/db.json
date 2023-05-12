@@ -15,24 +15,10 @@
       "isCompleted": true
     },
     {
-      "id": 903,
-      "title": "Clean House",
-      "tag": "work",
-      "deadline": "2023-05-12T18:28:50.000Z",
-      "isCompleted": false
-    },
-    {
-      "id": 1683830269361,
-      "title": "dad",
-      "tag": "work",
-      "deadline": "Sat May 13 2023 00:37:43 GMT+0600 (East Kazakhstan Time)",
-      "isCompleted": false
-    },
-    {
-      "id": 1683833181204,
-      "title": "sdsd",
-      "tag": "other",
-      "deadline": "Fri May 12 2023 01:26:17 GMT+0600 (East Kazakhstan Time)",
+      "id": 1683883957848,
+      "title": "Eat Bread",
+      "tag": "tag",
+      "deadline": "Sat May 13 2023 15:57:50 GMT+0600 (East Kazakhstan Time)",
       "isCompleted": false
     }
   ]

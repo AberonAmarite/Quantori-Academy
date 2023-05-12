@@ -1,25 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import Header from "./components/Header/Header";
 import Modal from "./components/Modal/Modal";
 import Tasks from "./components/Tasks/Tasks";
+import { useAppSelector } from "./store/hooks";
+import { TasksState } from "./store/taskSlice";
+
+export const tags = ["health", "work", "home", "other"];
+export const uniqueTagColors = ["#0053CF", "#9747FF", "#639462", "#EA8C00"];
 
 function App() {
-  const [modalVisibility, setModalVisibility] = useState(false);
-
-  const toggleModalVisibility = () => {
-    setModalVisibility(!modalVisibility);
-  };
+  const modalType = useAppSelector(
+    (state: { tasks: TasksState }) => state.tasks.modalType
+  );
 
   return (
     <div className="App">
-      <Header onAddTask={toggleModalVisibility}></Header>
+      <Header></Header>
       <Tasks isCompleted={false}></Tasks>
       <Tasks isCompleted={true}></Tasks>
-      <Modal
-        modalVisibility={modalVisibility}
-        toggleModalVisibility={toggleModalVisibility}
-      ></Modal>
+      <Modal modalName={modalType}></Modal>
     </div>
   );
 }

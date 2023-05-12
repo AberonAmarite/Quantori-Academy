@@ -10,6 +10,8 @@ import {
 } from "../../store/taskSlice";
 import { AppDispatch } from "../../store";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { tags } from "../../App";
 
 interface Props {
   isCompleted: boolean;
@@ -25,12 +27,33 @@ export const addTaskToServer = async (newTask: Task) => {
   });
 };
 
-const fetchTasks = () => {
+export const editTaskToServer = async (
+  editedTask: Task,
+  currentTaskId: number
+) => {
+  await fetch(`http://localhost:3004/tasks/${currentTaskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(editedTask),
+  });
+};
+
+const fetchTasks = (query: string = "") => {
   return (dispatch: AppDispatch) => {
     fetch("http://localhost:3004/tasks")
       .then((response) => response.json())
-      .then((tasks) => {
-        dispatch(setTasks(tasks));
+      .then((tasks: Task[]) => {
+        query
+          ? dispatch(
+              setTasks(
+                tasks.filter((task: Task) =>
+                  task.title.toLowerCase().startsWith(query.toLowerCase())
+                )
+              )
+            )
+          : dispatch(setTasks(tasks));
       });
   };
 };
@@ -52,18 +75,34 @@ const Tasks = ({ isCompleted }: Props) => {
     });
     dispatch(deleteTask(deletedTask));
   };
-  useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+
+  const TaskList = () => {
+    const { search } = useLocation();
+    const queryParams = new URLSearchParams(search);
+    const q = queryParams.get("q"); // get the 'q' query parameter
+
+    useEffect(() => {
+      if (q) {
+        dispatch(fetchTasks(q));
+      } else {
+        dispatch(fetchTasks());
+      }
+    }, [dispatch, q]);
+  };
+  TaskList();
 
   const taskType = isCompleted ? "Completed" : "Current";
 
-  if (tasks) {
+  let tagsAndEmpty = [...tags, ""];
+
+  const mapTagToRoute = (tag: string) => {
     return (
-      <div>
-        <h2>{taskType} Tasks</h2>
-        {tasks
+      <Route
+        key={tag}
+        path={`/tasks/${tag}`}
+        element={tasks
           .filter((el: Task) => el.isCompleted === isCompleted)
+          .filter((task) => task.tag === tag || tag === "")
           .map((task: Task) => (
             <TaskComponent
               key={task.id}
@@ -72,11 +111,19 @@ const Tasks = ({ isCompleted }: Props) => {
               onComplete={handleComplete}
             ></TaskComponent>
           ))}
-      </div>
+      />
     );
-  } else {
-    return <h3> No {taskType} tasks</h3>;
-  }
+  };
+  return (
+    <div>
+      <h2>{taskType} Tasks</h2>
+      {tasks ? (
+        <Routes>{tagsAndEmpty.map(mapTagToRoute)}</Routes>
+      ) : (
+        <h3> No {taskType} tasks</h3>
+      )}
+    </div>
+  );
 };
 
 export default Tasks;
