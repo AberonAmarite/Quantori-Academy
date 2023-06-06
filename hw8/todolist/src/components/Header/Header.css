@@ -1,0 +1,34 @@
+.header__main{
+    display: flex;
+    align-items: center;
+}
+.header__title{
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 36px;
+}
+.header__top{
+    justify-content: space-between;
+}
+
+.search-input{
+    padding: 16px 21px;
+
+    width: 100%;
+    height: 52px;
+
+    background: #F5F5F5;
+    border: 1px solid #D2D2D2;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    color: #000;
+    margin-right: 40px;
+}
+.search-input::placeholder{
+    color: #838383;
+}
+.header__filters{
+    width: 500px;
+}
