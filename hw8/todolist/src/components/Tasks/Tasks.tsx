@@ -87,7 +87,7 @@ const Tasks = ({ isCompleted }: Props) => {
       } else {
         dispatch(fetchTasks());
       }
-    }, [dispatch, q]);
+    }, [q]);
   };
   TaskList();
 
@@ -118,7 +118,22 @@ const Tasks = ({ isCompleted }: Props) => {
     <div>
       <h2>{taskType} Tasks</h2>
       {tasks ? (
-        <Routes>{tagsAndEmpty.map(mapTagToRoute)}</Routes>
+        <Routes>
+          {tagsAndEmpty.map(mapTagToRoute)}
+          <Route
+            path="/"
+            element={tasks
+              .filter((el: Task) => el.isCompleted === isCompleted)
+              .map((task: Task) => (
+                <TaskComponent
+                  key={task.id}
+                  task={task}
+                  onDelete={handleDeleteTask}
+                  onComplete={handleComplete}
+                ></TaskComponent>
+              ))}
+          />
+        </Routes>
       ) : (
         <h3> No {taskType} tasks</h3>
       )}
